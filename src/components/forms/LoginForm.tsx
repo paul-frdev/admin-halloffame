@@ -24,8 +24,23 @@ export const LoginForm = () => {
       password: "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch('http://localhost:5000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        })
+        if (response.ok) {
+          navigate('/')
+        } else {
+          throw new Error('Ошибка сети');
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
@@ -62,18 +77,20 @@ export const LoginForm = () => {
           {formik.touched.password && formik.errors.password}
         </div>
       </div>
-      <div className="mt-4 mb-8 text-md text-end">
+      <div className="flex justify-between mt-4 mb-8 text-md text-end w-full items-center">
+      <Link to="register" className="text-[#64748b] hover:text-[#788191]">
+          Register
+        </Link>
         <Link to="forgot-password" className="text-[#64748b] hover:text-[#788191]">
           Forgot Password ?
         </Link>
       </div>
-      <Link
-        to='/admin'
+      <button
         className='h-[60px] text-lg border-0 px-3 py-2 text-white fw-bold w-full max-w-[400px] mx-auto flex justify-center items-center text-center bg-black rounded-md'
         type="submit"
       >
         Login
-      </Link>
+      </button>
     </form>
   )
 }
