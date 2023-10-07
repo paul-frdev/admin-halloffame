@@ -1,7 +1,11 @@
 import React from 'react'
 import { RegisterForm } from '../components/forms/RegisterForm'
 
-export const Register = () => {
+
+interface RegisterProps {
+  setAuth: (data: boolean) => void;
+}
+export const Register: React.FC<RegisterProps> = ({ setAuth }) => {
   return (
     <div className=' bg-gray py-8 min-h-[100vh] flex justify-center items-center'>
       <div className='my-5 w-[450px] bg-white rounded-lg mx-auto py-8 px-4'>
@@ -10,7 +14,7 @@ export const Register = () => {
         {/* <div className="mb-2 text-center">
           "You are not an Admin"
         </div> */}
-        <RegisterForm />
+        <RegisterForm setAuth={setAuth} />
       </div>
     </div>
   )

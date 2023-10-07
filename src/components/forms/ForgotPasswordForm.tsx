@@ -1,6 +1,6 @@
 import React from 'react'
 import { CustomInput } from '../ui/CustomInput'
-import { CustomButton } from '../ui/CustomButton'
+import { Button } from '../ui/Button'
 
 export const ForgotPasswordForm = () => {
   return (
@@ -9,12 +9,12 @@ export const ForgotPasswordForm = () => {
         <CustomInput type="password" label="Email Address" id="email" />
       </div>
 
-      <CustomButton
+      <Button
         className='w-full h-[60px] text-lg'
         type="submit"
       >
         Send Link
-      </CustomButton>
+      </Button>
     </form>
   )
 }

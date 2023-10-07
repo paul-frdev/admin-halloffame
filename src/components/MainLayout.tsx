@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -17,23 +17,59 @@ import { FaClipboardList, FaBloggerB } from "react-icons/fa";
 import { TbWeight } from 'react-icons/tb'
 import { RiCouponLine } from 'react-icons/ri'
 
-
-
-
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Logo } from '../icons/Logo';
 import { cn } from '../lib/utils';
+import { toast } from 'react-toastify';
+import { Button as AppButton } from './ui/Button';
 
 const { Header, Sider, Content } = Layout;
 
-export const MainLayout = () => {
+
+interface MainLayoutProps {
+  setAuth?: (data: boolean) => void;
+}
+export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
 
   const [collapsed, setCollapsed] = useState(false);
   const [visible, setVisible] = useState(false)
+  const [dataProfile, setDataProfile] = useState<any>([]);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+
+  const getProfile = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/", {
+        method: "POST",
+        headers: { jwt_token: localStorage.user }
+      });
+
+      const parseData = await res.json();
+
+      setDataProfile({ name: parseData.first_name, email: parseData.email })
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const logout = async (e: any) => {
+    e.preventDefault();
+    try {
+      localStorage.removeItem("user");
+      setAuth?.(false);
+      toast.success("Logout successfully");
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
 
   return (
     <Layout>
@@ -214,9 +250,9 @@ export const MainLayout = () => {
                   />
                 </div>
                 <div>
-                  <h5 className="mb-1">Navdeep</h5>
-                  <p className="mb-0">navdeepdahiya753@gmail.com</p>
-                </div>
+                    <h5 className="mb-1">{dataProfile.name}</h5>
+                    <p className="mb-0">{dataProfile.email}</p>
+                  </div>
               </div>
               <div className={cn(`absolute top-[60px] border-2 border-[#ecebeb]  left-0 shadow-md rounded-md bg-white w-[252px]`, visible ? 'visible ' : 'hidden')}>
                 <div className='flex flex-col justify-start items-start p-4 text-lg font-normal'>
@@ -228,11 +264,11 @@ export const MainLayout = () => {
                     </Link>
                   </li>
                   <li className=' list-none'>
-                    <Link
-                      to="/"
+                    <button
+                      onClick={logout}
                     >
                       Signout
-                    </Link>
+                    </button>
                   </li>
                 </div>
               </div>

@@ -1,7 +1,11 @@
 import React from 'react'
 import { LoginForm } from '../components/forms/LoginForm'
 
-export const Login = () => {
+
+interface LoginProps {
+  setAuth: (data: boolean) => void;
+}
+export const Login: React.FC<LoginProps> = ({ setAuth }) => {
   return (
     <div className=' bg-gray py-8 min-h-[100vh] flex justify-center items-center'>
       <div className='my-5 w-[450px] bg-white rounded-lg mx-auto py-8 px-4'>
@@ -10,7 +14,7 @@ export const Login = () => {
         {/* <div className="mb-2 text-center">
           "You are not an Admin"
         </div> */}
-        <LoginForm />
+        <LoginForm setAuth={setAuth} />
       </div>
     </div>
   )

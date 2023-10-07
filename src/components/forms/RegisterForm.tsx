@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { CustomButton } from '../ui/CustomButton';
+import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
 import { toast } from "react-toastify";
 
@@ -24,8 +24,10 @@ const schema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
-
-export const RegisterForm = () => {
+interface RegisterFormProps {
+  setAuth: (data: boolean) => void;
+}
+export const RegisterForm: React.FC<RegisterFormProps> = ({ setAuth }) => {
   const navigate = useNavigate();
 
 
@@ -39,7 +41,6 @@ export const RegisterForm = () => {
     },
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log('values', values);
 
       try {
         const response = await fetch('http://localhost:5000/register', {
@@ -50,17 +51,16 @@ export const RegisterForm = () => {
           body: JSON.stringify(values),
         });
 
-        console.log('response', response);
-
         const parseRes = await response.json();
 
-        console.log('parseRes', parseRes);
-        
         if (parseRes.jwtToken) {
-          localStorage.setItem("token", parseRes.jwtToken);
+          localStorage.setItem("user", parseRes.jwtToken);
           toast.success("Register Successfully");
+          setAuth(true)
+          navigate('/admin')
         } else {
           toast.error(parseRes);
+          setAuth(false)
         }
       } catch (error) {
         console.log(error);

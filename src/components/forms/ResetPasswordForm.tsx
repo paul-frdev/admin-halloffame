@@ -1,6 +1,6 @@
 import React from 'react'
 import { CustomInput } from '../ui/CustomInput'
-import { CustomButton } from '../ui/CustomButton'
+import { Button } from '../ui/Button'
 
 export const ResetPasswordForm = () => {
   return (
@@ -16,12 +16,12 @@ export const ResetPasswordForm = () => {
         />
       </div>
 
-      <CustomButton
+      <Button
         className='w-full h-[60px] text-lg'
         type="submit"
       >
         Reset Password
-      </CustomButton>
+      </Button>
     </form>
   )
 }

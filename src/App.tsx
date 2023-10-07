@@ -1,10 +1,12 @@
-import React from 'react';
+import { CheckUserContext } from './providers/checkUserContext';
 import { AppRoutes } from './routes/AppRoutes';
 
-
 function App() {
+
   return (
-    <AppRoutes />
+    <CheckUserContext>
+      <AppRoutes />
+    </CheckUserContext>
   );
 }
 

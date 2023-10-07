@@ -2,8 +2,9 @@ import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { CustomButton } from '../ui/CustomButton';
+import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
+import { toast } from 'react-toastify';
 
 
 const schema = yup.object().shape({
@@ -14,7 +15,10 @@ const schema = yup.object().shape({
   password: yup.string().required("Password is Required"),
 });
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  setAuth: (data: boolean) => void;
+}
+export const LoginForm: React.FC<LoginFormProps> = ({ setAuth }) => {
   const navigate = useNavigate();
 
 
@@ -33,10 +37,17 @@ export const LoginForm = () => {
           },
           body: JSON.stringify(values),
         })
-        if (response.ok) {
-          navigate('/')
+
+        const parseRes = await response.json();
+
+        if (parseRes.jwtToken) {
+          localStorage.setItem("user", parseRes.jwtToken);
+          setAuth(true);
+          toast.success("Logged in Successfully");
+          navigate('/admin', { replace: true })
         } else {
-          throw new Error('Ошибка сети');
+          setAuth(false);
+          toast.error(parseRes);
         }
       } catch (error) {
         console.log(error);
@@ -78,7 +89,7 @@ export const LoginForm = () => {
         </div>
       </div>
       <div className="flex justify-between mt-4 mb-8 text-md text-end w-full items-center">
-      <Link to="register" className="text-[#64748b] hover:text-[#788191]">
+        <Link to="register" className="text-[#64748b] hover:text-[#788191]">
           Register
         </Link>
         <Link to="forgot-password" className="text-[#64748b] hover:text-[#788191]">
