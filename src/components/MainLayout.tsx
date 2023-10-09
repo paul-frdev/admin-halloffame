@@ -196,7 +196,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
               label: "Blog",
               children: [
                 {
-                  key: "article",
+                  key: "add-article",
                   icon: <ImBlog size={20} />,
                   label: "Add Article",
                 },

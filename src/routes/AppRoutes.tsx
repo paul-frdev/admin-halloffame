@@ -8,6 +8,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { AddArticle } from '../pages/AddArticle';
 import { Register } from '../pages/Register';
 import { useCheckUserContext } from '../providers/checkUserContext';
+import { AddBlogCategory } from '../pages/AddBlogCategory';
 
 
 
@@ -26,7 +27,9 @@ export const AppRoutes = () => {
         element={isAuthenticated ? <MainLayout setAuth={setAuth} /> : <Navigate to="/" />}
       >
         <Route index element={<Dashboard />} />
-        <Route path='article' element={<AddArticle />} />
+        <Route path='add-article' element={<AddArticle />} />
+        <Route path='blog-category' element={<AddBlogCategory />} />
+        <Route path="blog-category/:id" element={<AddBlogCategory />} />
       </Route>
       <Route
         path='/'
