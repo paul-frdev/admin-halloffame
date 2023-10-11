@@ -211,7 +211,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
                   label: "Add Blog Category",
                 },
                 {
-                  key: "blog-category-list",
+                  key: "blog-list",
                   icon: <FaBloggerB size={20} />,
                   label: "Blog Category List",
                 },
@@ -284,7 +284,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
         <Content
           style={{
             margin: '24px 16px',
-            padding: 24,
+            padding: 18,
+            paddingLeft: 5,
+            paddingRight: 5,
             minHeight: 280,
             background: colorBgContainer,
           }}

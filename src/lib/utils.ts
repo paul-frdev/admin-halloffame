@@ -7,8 +7,8 @@ const getTokenFromLocalStorage = localStorage.getItem('user') ? JSON.parse(JSON.
 
 export const config = {
   headers: {
-    Authorization: `${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.user : ''}`,
-    ContentType: 'application/json',
+    Authorization: `${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage : ''}`,
+    Accept: 'application/json',
   },
 };
 

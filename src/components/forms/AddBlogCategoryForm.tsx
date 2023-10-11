@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 import * as yup from "yup";
 import { useFormik } from "formik";
@@ -22,6 +22,10 @@ export const AddBlogCategoryForm = () => {
 
   console.log('bCategories', bCategories);
 
+  useEffect(() => {
+    dispatch(resetState());
+  }, [])
+  
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -29,10 +33,9 @@ export const AddBlogCategoryForm = () => {
     },
     validationSchema: schema,
     onSubmit: async (values) => {
-      console.log('values.title', values.title);
       const data = { title: values.title }
       dispatch(createNewBlogCategory(data));
-
+      formik.resetForm();
       setTimeout(() => {
         dispatch(resetState())
       }, 300);

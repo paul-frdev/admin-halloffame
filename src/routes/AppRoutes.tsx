@@ -1,14 +1,15 @@
 import 'antd/dist/reset.css';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from '../pages/Login';
 import { ResetPassword } from '../pages/ResetPassword';
 import { ForgotPassword } from '../pages/ForgotPassword';
 import { MainLayout } from '../components/MainLayout';
 import { Dashboard } from '../pages/Dashboard';
-import { AddArticle } from '../pages/AddArticle';
+import { Article } from '../pages/Article';
 import { Register } from '../pages/Register';
 import { useCheckUserContext } from '../providers/checkUserContext';
-import { AddBlogCategory } from '../pages/AddBlogCategory';
+import { BlogCategory } from '../pages/BlogCategory';
+import { BlogCategoryList } from '../pages/BlogCategoryList';
 
 
 
@@ -27,9 +28,10 @@ export const AppRoutes = () => {
         element={isAuthenticated ? <MainLayout setAuth={setAuth} /> : <Navigate to="/" />}
       >
         <Route index element={<Dashboard />} />
-        <Route path='add-article' element={<AddArticle />} />
-        <Route path='blog-category' element={<AddBlogCategory />} />
-        <Route path="blog-category/:id" element={<AddBlogCategory />} />
+        <Route path='add-article' element={<Article />} />
+        <Route path='blog-category' element={<BlogCategory />} />
+        <Route path="blog-category/:id" element={<BlogCategory />} />
+        <Route path='blog-list' element={<BlogCategoryList />} />
       </Route>
       <Route
         path='/'

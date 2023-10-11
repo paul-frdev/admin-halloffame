@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { AddBlogCategoryForm } from '../components/forms/AddBlogCategoryForm'
 
 
-export const AddBlogCategory = () => {
+export const BlogCategory = () => {
 
   return (
     <AddBlogCategoryForm />
