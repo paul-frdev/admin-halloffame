@@ -3,7 +3,7 @@ import axios from 'axios';
 import { base_url, config } from '../lib/utils';
 
 const getArticles = async () => {
-  const response = await axios.get(`${base_url}blog/`);
+  const response = await axios.get(`${base_url}articles/`);
 
   return response.data;
 };

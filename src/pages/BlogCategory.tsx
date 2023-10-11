@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import { AddBlogCategoryForm } from '../components/forms/AddBlogCategoryForm'
 
 

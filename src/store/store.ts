@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import blogCategoryReducer from './blogCategorySlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import articlesReducer from './ArticleSlice';
+import articlesReducer from './articleSlice';
 import uploadImageReducer from './uploadImageSlice';
 
 export const store = configureStore({

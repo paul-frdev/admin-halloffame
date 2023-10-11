@@ -1,4 +1,4 @@
-import articleService from '../requests/ArticleService';
+import articleService from '../requests/articleService';
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import { ArticleProps, ArticlesState } from '../types/store';
 

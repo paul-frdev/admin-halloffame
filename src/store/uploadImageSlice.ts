@@ -14,6 +14,14 @@ export const uploadImg = createAsyncThunk<ImageUrls[], any, { rejectValue: strin
   }
 });
 
+export const deleteImg = createAsyncThunk<string, string | undefined, { rejectValue: string }>('delete/images', async (id, thunkAPI) => {
+  try {
+    return await uploadService.deleteImage(id);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const initialState: ImageProps = {
   images: [],
   isError: false,
@@ -42,6 +50,21 @@ const uploadImageSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
+      })
+      .addCase(deleteImg.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteImg.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.images = [];
+      })
+      .addCase(deleteImg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload;
       });
   },
 });
