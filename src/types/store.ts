@@ -16,10 +16,21 @@ export interface BlogCategoriesState extends BasicState {
 
 export interface ArticleProps {
   id?: string;
-  title: string;
-  description: string;
+  cat_title?: string;
+  created_at?: Date;
   categoryId?: string;
   images?: ImageUrls[];
+  article_id?: string;
+  description: string;
+  title: string;
+}
+
+export interface ArticleById {
+  title?: string;
+  Images?: ImageUrls;
+  description?: string;
+  cat_title: string;
+  category_id: string;
 }
 
 export interface ArticlesState extends BasicState {

@@ -3,7 +3,13 @@ import axios from 'axios';
 import { base_url, config } from '../lib/utils';
 
 const getArticles = async () => {
-  const response = await axios.get(`${base_url}articles/`);
+  const response = await axios.get(`${base_url}article/`);
+
+  return response.data;
+};
+
+const getArticle = async (id: string) => {
+  const response = await axios.get(`${base_url}article/${id}`, config);
 
   return response.data;
 };
@@ -17,6 +23,7 @@ const createArticle = async (article: ArticleProps) => {
 const articleService = {
   createArticle,
   getArticles,
+  getArticle,
 };
 
 export default articleService;

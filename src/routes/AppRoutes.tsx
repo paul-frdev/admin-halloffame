@@ -10,6 +10,7 @@ import { Register } from '../pages/Register';
 import { useCheckUserContext } from '../providers/checkUserContext';
 import { BlogCategory } from '../pages/BlogCategory';
 import { BlogCategoryList } from '../pages/BlogCategoryList';
+import { ArticleList } from '../pages/ArticleList';
 
 
 
@@ -29,6 +30,8 @@ export const AppRoutes = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path='add-article' element={<Article />} />
+        <Route path='article/:id' element={<Article />} />
+        <Route path='article-list' element={<ArticleList />} />
         <Route path='blog-category' element={<BlogCategory />} />
         <Route path="blog-category/:id" element={<BlogCategory />} />
         <Route path='blog-list' element={<BlogCategoryList />} />

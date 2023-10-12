@@ -8,12 +8,11 @@ import { useFormik } from "formik";
 import "react-quill/dist/quill.snow.css";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { getCategories, resetState } from '../../store/blogCategorySlice';
-import { ImageUrls } from '../../types/store';
 import { CustomInput } from '../../components/ui/CustomInput';
 import { uploadImg, deleteImg } from '../../store/uploadImageSlice';
 import { Button } from '../ui/Button';
-import { createArticle } from '../../store/articleSlice';
-import { AiOutlineClose } from "react-icons/ai"
+import { createArticle, getArticleById } from '../../store/articleSlice';
+import { AiOutlineClose } from "react-icons/ai";
 
 
 let schema = yup.object().shape({
@@ -22,24 +21,56 @@ let schema = yup.object().shape({
   categoryId: yup.string().required("Category is Required"),
 });
 
-interface MyFormValues {
-  title: string;
-  description: string;
-  categoryId: string;
-  images: { public_id: string | undefined; url: string | undefined }[];
-}
+const myColors = [
+  "purple",
+  "#785412",
+  "#452632",
+  "#856325",
+  "#963254",
+  "#254563",
+  "white"
+];
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [{ align: ["right", "center", "justify"] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ color: myColors }],
+    [{ background: myColors }]
+  ]
+};
+
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "link",
+  "color",
+  "background",
+  "align"
+];
 
 export const AddArticleForm = () => {
+
+  const [curArticleId, setCurArticleId] = useState<any>()
+
 
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const ImageState = useAppSelector((state: RootState) => state.uploadImages.images);
   const blogCategories = useAppSelector((state: RootState) => state.blogCategory.bCategories);
-  const { articles, articleImages } = useAppSelector((state: RootState) => state.articles);
+  const articles = useAppSelector((state: RootState) => state.articles);
 
-  const getBlogId = location.pathname.split("/")[3];
+  const articleById = location.pathname.split("/")[3];
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
+
 
   ImageState.forEach((i) => {
     imagesCloudinary.push({
@@ -47,6 +78,16 @@ export const AddArticleForm = () => {
       url: i.url,
     });
   });
+
+  useEffect(() => {
+    const articleWithId = articles.articles.find((item) => item.article_id === articleById)
+    setCurArticleId(articleWithId);
+    if (articleById !== undefined) {
+      dispatch(getArticleById(articleById))
+    } else {
+      dispatch(resetState())
+    }
+  }, [articleById]);
 
   useEffect(() => {
     dispatch(resetState());
@@ -57,9 +98,9 @@ export const AddArticleForm = () => {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      title: "",
-      description: "",
-      categoryId: "",
+      title: curArticleId ? curArticleId.title as string : "",
+      description: curArticleId ? curArticleId.description as string : "",
+      categoryId: curArticleId ? curArticleId.cat_title as string : "",
       images: imagesCloudinary,
     },
     validationSchema: schema,
@@ -71,7 +112,7 @@ export const AddArticleForm = () => {
   return (
     <div>
       <h3 className="mb-4 title">
-        {getBlogId !== undefined ? "Edit" : "Add"} Blog
+        {articleById !== undefined ? "Edit" : "Add"} Blog
       </h3>
       <form action="" onSubmit={formik.handleSubmit}>
         <div className='relative mt-8'>
@@ -112,6 +153,8 @@ export const AddArticleForm = () => {
           <ReactQuill
             theme="snow"
             className="my-8"
+            modules={modules}
+            formats={formats}
             onChange={formik.handleChange("description")}
             value={formik.values.description}
           />
@@ -119,15 +162,15 @@ export const AddArticleForm = () => {
             {formik.touched.description && formik.errors.description}
           </div>
         </div>
-        <div className=" relative bg-white border-1 p-5 text-center mt-3">
+        <div className=" relative bg-white border-1 p-5 text-center mt-3 rounded-md">
           <Dropzone
             onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
           >
             {({ getRootProps, getInputProps }) => (
               <section>
-                <div {...getRootProps()}>
+                <div {...getRootProps()} className=' rounded-sm'>
                   <input {...getInputProps()} />
-                  <p>
+                  <p className='mb-0 p-4 text-lg border-2 border-[#999999] border-dashed rounded-sm cursor-pointer bg-white'>
                     Drag 'n' drop some files here, or click to select files
                   </p>
                 </div>
@@ -139,16 +182,16 @@ export const AddArticleForm = () => {
           {ImageState?.map((image, j) => {
             return (
               <div className="relative max-w-fit" key={j}>
-                  <button
-                    type="button"
-                    onClick={() => dispatch(deleteImg(image.public_id))}
-                    className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
-                    style={{ top: "10px", right: "10px" }}
-                  >
-                    <AiOutlineClose size={24} />
-                  </button>
-                  <img src={image.url} alt="img" width={200} height={200} />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => dispatch(deleteImg(image.public_id))}
+                  className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
+                  style={{ top: "10px", right: "10px" }}
+                >
+                  <AiOutlineClose size={24} />
+                </button>
+                <img src={image.url} alt="img" width={200} height={200} />
+              </div>
             );
           })}
         </div>
@@ -157,7 +200,7 @@ export const AddArticleForm = () => {
           className="btn btn-success border-0 rounded-3 my-5"
           type="submit"
         >
-          {getBlogId !== undefined ? "Edit" : "Add"} Article
+          {articleById !== undefined ? "Edit" : "Add"} Article
         </Button>
       </form>
     </div>
