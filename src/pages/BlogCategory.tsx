@@ -1,10 +1,10 @@
 import React from 'react'
-import { AddBlogCategoryForm } from '../components/forms/AddBlogCategoryForm'
+import { BlogCategoryForm } from '../components/forms/BlogCategoryForm'
 
 
 export const BlogCategory = () => {
 
   return (
-    <AddBlogCategoryForm />
+    <BlogCategoryForm />
   )
 }

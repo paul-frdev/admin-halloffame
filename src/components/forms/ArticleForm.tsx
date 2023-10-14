@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import "react-quill/dist/quill.snow.css";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { getCategories, resetState } from '../../store/blogCategorySlice';
-import { CustomInput } from '../../components/ui/CustomInput';
+import { CustomInput } from '../ui/CustomInput';
 import { uploadImg, deleteImg } from '../../store/uploadImageSlice';
 import { Button } from '../ui/Button';
 import { createArticle, getArticleById } from '../../store/articleSlice';
@@ -56,7 +56,7 @@ const formats = [
   "align"
 ];
 
-export const AddArticleForm = () => {
+export const ArticleForm = () => {
 
   const [curArticleId, setCurArticleId] = useState<any>()
 

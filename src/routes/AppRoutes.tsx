@@ -11,6 +11,10 @@ import { useCheckUserContext } from '../providers/checkUserContext';
 import { BlogCategory } from '../pages/BlogCategory';
 import { BlogCategoryList } from '../pages/BlogCategoryList';
 import { ArticleList } from '../pages/ArticleList';
+import { Color } from '../pages/Color';
+import { Size } from '../pages/Size';
+import { Weight } from '../pages/Weight';
+import { ColorList } from '../pages/ColorList';
 
 
 
@@ -31,6 +35,13 @@ export const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path='add-article' element={<Article />} />
         <Route path='article/:id' element={<Article />} />
+        <Route path='color' element={<Color />} />
+        <Route path='color/:id' element={<Color />} />
+        <Route path='color-list' element={<ColorList />} />
+        <Route path='size' element={<Size />} />
+        <Route path='size/:id' element={<Size />} />
+        <Route path='weight' element={<Weight />} />
+        <Route path='weight/:id' element={<Weight />} />
         <Route path='article-list' element={<ArticleList />} />
         <Route path='blog-category' element={<BlogCategory />} />
         <Route path="blog-category/:id" element={<BlogCategory />} />

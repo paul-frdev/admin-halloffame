@@ -12,13 +12,15 @@ const schema = yup.object().shape({
 });
 
 
-export const AddBlogCategoryForm = () => {
+export const BlogCategoryForm = () => {
 
   const dispatch = useAppDispatch()
   const location = useLocation();
   const getBlogCatId = location.pathname.split("/")[3];
   const { bCategories, isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.blogCategory)
 
+  console.log('bCategories', bCategories);
+  
   useEffect(() => {
     dispatch(resetState());
   }, [])

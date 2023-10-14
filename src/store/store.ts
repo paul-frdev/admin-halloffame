@@ -3,12 +3,14 @@ import blogCategoryReducer from './blogCategorySlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import articlesReducer from './articleSlice';
 import uploadImageReducer from './uploadImageSlice';
+import colorsReducer from './colorSlice';
 
 export const store = configureStore({
   reducer: {
     blogCategory: blogCategoryReducer,
     articles: articlesReducer,
     uploadImages: uploadImageReducer,
+    colors: colorsReducer,
   },
 });
 

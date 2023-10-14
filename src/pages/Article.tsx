@@ -1,10 +1,10 @@
-import { AddArticleForm } from '../components/forms/AddArticleForm'
+import { ArticleForm } from '../components/forms/ArticleForm'
 
 export const Article = () => {
 
   return (
     <>
-      <AddArticleForm />
+      <ArticleForm />
     </>
   )
 }

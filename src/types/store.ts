@@ -47,3 +47,16 @@ export interface ImageUrls {
 export interface ImageProps extends BasicState {
   images: ImageUrls[];
 }
+
+export interface ColorsData {
+  colors_id?: string;
+  color_name?: string;
+}
+
+export interface ColorsState extends BasicState {
+  colors?: ColorsData[];
+  colorName?: ColorsData;
+  createdColor?: ColorsData[];
+  updatedColor?: ColorsData[];
+  deletedColor?: ColorsData;
+}
