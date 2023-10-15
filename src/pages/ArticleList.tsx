@@ -44,8 +44,6 @@ export const ArticleList = () => {
   const location = useLocation()
   const getArticleState = useAppSelector((state: RootState) => state.articles.articles);
 
-  console.log('getArticleState', getArticleState);
-
   const data = [];
 
 

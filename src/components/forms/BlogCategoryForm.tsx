@@ -19,7 +19,6 @@ export const BlogCategoryForm = () => {
   const getBlogCatId = location.pathname.split("/")[3];
   const { bCategories, isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.blogCategory)
 
-  console.log('bCategories', bCategories);
   
   useEffect(() => {
     dispatch(resetState());

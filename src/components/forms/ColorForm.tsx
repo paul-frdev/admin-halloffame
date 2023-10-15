@@ -18,12 +18,10 @@ export const ColorForm = () => {
 
   const dispatch = useAppDispatch()
   const location = useLocation();
-  const { colors, isError, isLoading, isSuccess, createdColor, updatedColor, colorName, deletedColor } = useAppSelector((state: RootState) => state.colors)
-  
+  const { isError, isLoading, isSuccess, createdColor, updatedColor, colorName } = useAppSelector((state: RootState) => state.colors)
+
   const navigate = useNavigate();
-  
-  console.log('isLoading', isLoading, 'colors', colors, "colorName", colorName?.color_name, "createdColor", createdColor, 'updatedColor', updatedColor, 'deletedColor', deletedColor);
-  
+
   const getColorId = location.pathname.split("/")[3];
 
   useEffect(() => {
@@ -83,7 +81,7 @@ export const ColorForm = () => {
             onBlur={formik.handleBlur("color_name")}
             value={formik.values.color_name}
             label="Enter Color"
-            id="blogcat"
+            id="color"
           />
           <div className="error">
             {formik.touched.color_name && formik.errors.color_name}
@@ -91,6 +89,7 @@ export const ColorForm = () => {
           <Button
             className="btn btn-success border-0 rounded-3 my-5"
             type="submit"
+            disabled={isLoading}
           >
             {getColorId !== undefined ? "Edit" : "Add"} Color
           </Button>

@@ -5,8 +5,8 @@ import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
-import { deleteAColorById, getColors, resetState } from '../store/colorSlice';
 import { toast } from 'react-toastify';
+import { deleteWeightById, getWeights, resetState } from '../store/weightSlice';
 
 
 const columns = [
@@ -26,38 +26,38 @@ const columns = [
   },
 ];
 
-export const ColorList = () => {
+export const WeightList = () => {
   const [open, setOpen] = useState(false);
-  const [colorId, setColorId] = useState("");
+  const [weightId, setWeightId] = useState("");
 
   const dispatch = useAppDispatch()
-  const colorState = useAppSelector((state: RootState) => state.colors.colors)
-  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.colors)
+  const weightState = useAppSelector((state: RootState) => state.weights.weights)
+  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.weights)
 
 
   useEffect(() => {
     dispatch(resetState());
-    dispatch(getColors())
+    dispatch(getWeights())
   }, [])
 
   const data = [];
 
-  for (let i = 0; i < colorState?.length!; i++) {
-    const colorArray: any = colorState?.[i];
+  for (let i = 0; i < weightState?.length!; i++) {
+    const weightArray: any = weightState?.[i];
     data.push({
       key: i + 1,
-      title: colorArray.color_name,
+      title: weightArray.weight_name,
       action: (
         <span className='flex justify-start'>
           <Link
-            to={`/admin/color/${colorArray.colors_id}`}
+            to={`/admin/weight/${weightArray.weights_id}`}
             className=" fs-3 mr-4 text-[#ef090d]"
           >
             <BiEdit />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
-            onClick={() => showModal(colorArray.colors_id!)}
+            onClick={() => showModal(weightArray.weights_id!)}
           >
             <AiFillDelete />
           </button>
@@ -69,7 +69,7 @@ export const ColorList = () => {
 
   const showModal = (e: string) => {
     setOpen(true);
-    setColorId(e);
+    setWeightId(e);
   };
 
   const hideModal = () => {
@@ -77,13 +77,13 @@ export const ColorList = () => {
   };
 
 
-  const deleteColor = (e: string) => {
-    dispatch(deleteAColorById(e));
+  const deleteWeight = (e: string) => {
+    dispatch(deleteWeightById(e));
     setOpen(false);
     if (isSuccess) {
-      toast.success('Color deleted successfully')
+      toast.success('Weight deleted successfully')
       setTimeout(() => {
-        dispatch(getColors());
+        dispatch(getWeights());
       }, 100);
     } else {
       toast.error('Something went wrong')
@@ -92,14 +92,14 @@ export const ColorList = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Blogs List</h3>
+      <h3 className="mb-4 title">Weights List</h3>
       <div>
         <Table columns={columns} dataSource={data} />
         <Modal
           hideModal={hideModal}
           open={open}
-          performAction={() => { deleteColor(colorId) }}
-          title="Are you sure you want to delete color?"
+          performAction={() => { deleteWeight(weightId) }}
+          title="Are you sure you want to delete weight?"
         />
       </div>
     </div>

@@ -24,10 +24,6 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
 
   const navigate = useNavigate();
 
-  console.log('render');
-
-
-
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
       <div className="logo text-white text-center flex flex-col justify-center items-center mb-4">
@@ -95,6 +91,16 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
                 key: 'category-list',
                 icon: <PiFoldersBold size={20} />,
                 label: 'Category List',
+              },
+              {
+                key: 'brand',
+                icon: <AiOutlineFolderAdd size={20} />,
+                label: 'Add brand',
+              },
+              {
+                key: 'brand-list',
+                icon: <PiFoldersBold size={20} />,
+                label: 'Brand List',
               },
               {
                 key: "color",

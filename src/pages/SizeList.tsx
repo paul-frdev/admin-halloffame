@@ -5,8 +5,8 @@ import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
-import { deleteAColorById, getColors, resetState } from '../store/colorSlice';
 import { toast } from 'react-toastify';
+import { deleteSizeById, getSizes, resetState } from '../store/sizeSlice';
 
 
 const columns = [
@@ -26,38 +26,38 @@ const columns = [
   },
 ];
 
-export const ColorList = () => {
+export const SizeList = () => {
   const [open, setOpen] = useState(false);
-  const [colorId, setColorId] = useState("");
+  const [sizeId, setSizeId] = useState("");
 
   const dispatch = useAppDispatch()
-  const colorState = useAppSelector((state: RootState) => state.colors.colors)
-  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.colors)
+  const sizeState = useAppSelector((state: RootState) => state.sizes.sizes)
+  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.sizes)
 
 
   useEffect(() => {
     dispatch(resetState());
-    dispatch(getColors())
+    dispatch(getSizes())
   }, [])
 
   const data = [];
 
-  for (let i = 0; i < colorState?.length!; i++) {
-    const colorArray: any = colorState?.[i];
+  for (let i = 0; i < sizeState?.length!; i++) {
+    const sizeArray: any = sizeState?.[i];
     data.push({
       key: i + 1,
-      title: colorArray.color_name,
+      title: sizeArray.size_name,
       action: (
         <span className='flex justify-start'>
           <Link
-            to={`/admin/color/${colorArray.colors_id}`}
+            to={`/admin/size/${sizeArray.sizes_id}`}
             className=" fs-3 mr-4 text-[#ef090d]"
           >
             <BiEdit />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
-            onClick={() => showModal(colorArray.colors_id!)}
+            onClick={() => showModal(sizeArray.sizes_id!)}
           >
             <AiFillDelete />
           </button>
@@ -69,7 +69,7 @@ export const ColorList = () => {
 
   const showModal = (e: string) => {
     setOpen(true);
-    setColorId(e);
+    setSizeId(e);
   };
 
   const hideModal = () => {
@@ -77,13 +77,13 @@ export const ColorList = () => {
   };
 
 
-  const deleteColor = (e: string) => {
-    dispatch(deleteAColorById(e));
+  const deleteSize = (e: string) => {
+    dispatch(deleteSizeById(e));
     setOpen(false);
     if (isSuccess) {
-      toast.success('Color deleted successfully')
+      toast.success('Size deleted successfully')
       setTimeout(() => {
-        dispatch(getColors());
+        dispatch(getSizes());
       }, 100);
     } else {
       toast.error('Something went wrong')
@@ -92,14 +92,14 @@ export const ColorList = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Blogs List</h3>
+      <h3 className="mb-4 title">Size List</h3>
       <div>
         <Table columns={columns} dataSource={data} />
         <Modal
           hideModal={hideModal}
           open={open}
-          performAction={() => { deleteColor(colorId) }}
-          title="Are you sure you want to delete color?"
+          performAction={() => { deleteSize(sizeId) }}
+          title="Are you sure you want to delete size?"
         />
       </div>
     </div>
