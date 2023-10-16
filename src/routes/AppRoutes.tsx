@@ -21,6 +21,8 @@ import { ProductForm } from '../components/forms/ProductForm';
 import { ProductList } from '../pages/ProductList';
 import { Category } from '../pages/Category';
 import { CategoryList } from '../pages/CategoryList';
+import { Brand } from '../pages/Brand';
+import { BrandList } from '../pages/BrandList';
 
 
 
@@ -53,6 +55,9 @@ export const AppRoutes = () => {
         <Route path='category' element={<Category />} />
         <Route path='category/:id' element={<Category />} />
         <Route path='category-list' element={<CategoryList />} />
+        <Route path='brand' element={<Brand />} />
+        <Route path='brand/:id' element={<Brand />} />
+        <Route path='brand-list' element={<BrandList />} />
         <Route path='category' element={<Category />} />
         <Route path='product' element={<ProductForm />} />
         <Route path='product/:id' element={<ProductForm />} />

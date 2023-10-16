@@ -6,7 +6,7 @@ import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
-import { deleteCategoryById, getCategories, resetState } from '../store/categorySlice';
+import { getBrands, resetState, deleteBrandById, getBrand } from '../store/brandSlice';
 
 
 const columns = [
@@ -26,38 +26,38 @@ const columns = [
   },
 ];
 
-export const CategoryList = () => {
+export const BrandList = () => {
   const [open, setOpen] = useState(false);
-  const [colorId, setColorId] = useState("");
+  const [brandId, setBrandId] = useState("");
 
   const dispatch = useAppDispatch()
-  const categoriesState = useAppSelector((state: RootState) => state.categories.categories)
-  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.categories)
+  const brandState = useAppSelector((state: RootState) => state.brands.brands)
+  const { isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.brands)
 
 
   useEffect(() => {
     dispatch(resetState());
-    dispatch(getCategories())
+    dispatch(getBrands())
   }, [])
 
   const data = [];
 
-  for (let i = 0; i < categoriesState?.length!; i++) {
-    const categoriesArray: any = categoriesState?.[i];
+  for (let i = 0; i < brandState?.length!; i++) {
+    const brandArray: any = brandState?.[i];
     data.push({
       key: i + 1,
-      title: categoriesArray.category_name,
+      title: brandArray.brand_name,
       action: (
         <span className='flex justify-start'>
           <Link
-            to={`/admin/category/${categoriesArray.category_id}`}
+            to={`/admin/brand/${brandArray.brand_id}`}
             className=" fs-3 mr-4 text-[#ef090d]"
           >
             <BiEdit />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
-            onClick={() => showModal(categoriesArray.category_id!)}
+            onClick={() => showModal(brandArray.brand_id!)}
           >
             <AiFillDelete />
           </button>
@@ -69,7 +69,7 @@ export const CategoryList = () => {
 
   const showModal = (e: string) => {
     setOpen(true);
-    setColorId(e);
+    setBrandId(e);
   };
 
   const hideModal = () => {
@@ -77,13 +77,13 @@ export const CategoryList = () => {
   };
 
 
-  const deleteColor = (e: string) => {
-    dispatch(deleteCategoryById(e));
+  const deleteBrand = (e: string) => {
+    dispatch(deleteBrandById(e));
     setOpen(false);
     if (isSuccess) {
-      toast.success('Category deleted successfully')
+      toast.success('Brand deleted successfully')
       setTimeout(() => {
-        dispatch(getCategories());
+        dispatch(getBrands());
       }, 100);
     } else {
       toast.error('Something went wrong')
@@ -92,14 +92,14 @@ export const CategoryList = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Blogs List</h3>
+      <h3 className="mb-4 title">Brand List</h3>
       <div>
         <Table columns={columns} dataSource={data} />
         <Modal
           hideModal={hideModal}
           open={open}
-          performAction={() => { deleteColor(colorId) }}
-          title="Are you sure you want to delete category?"
+          performAction={() => { deleteBrand(brandId) }}
+          title="Are you sure you want to delete Brand?"
         />
       </div>
     </div>

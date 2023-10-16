@@ -10,9 +10,8 @@ export const getCategories = createAsyncThunk('productCategory/get-categories', 
   }
 });
 export const createCategory = createAsyncThunk<CategoriesData, CategoriesData, { rejectValue: string }>(
-  'productCategory/create-category',
+  'category/create-category',
   async (categoryData, thunkAPI) => {
-    
     try {
       return await categoryService.createCategory(categoryData);
     } catch (error: any) {
@@ -21,7 +20,7 @@ export const createCategory = createAsyncThunk<CategoriesData, CategoriesData, {
   }
 );
 
-export const getCategory = createAsyncThunk<CategoriesData, string, { rejectValue: string }>('productCategory/get-category', async (id, thunkAPI) => {
+export const getCategory = createAsyncThunk<CategoriesData, string, { rejectValue: string }>('category/get-category', async (id, thunkAPI) => {
   try {
     return await categoryService.getCategory(id);
   } catch (error: any) {
@@ -29,7 +28,7 @@ export const getCategory = createAsyncThunk<CategoriesData, string, { rejectValu
   }
 });
 export const updateCategory = createAsyncThunk<CategoriesData, CategoriesData, { rejectValue: string }>(
-  'productCategory/update-category',
+  'category/update-category',
   async (category, thunkAPI) => {
     try {
       return await categoryService.updateCategory(category);
@@ -39,7 +38,7 @@ export const updateCategory = createAsyncThunk<CategoriesData, CategoriesData, {
   }
 );
 
-export const deleteCategoryById = createAsyncThunk<string[], string, { rejectValue: string }>('productCategory/delete-category', async (id, thunkAPI) => {
+export const deleteCategoryById = createAsyncThunk<string[], string, { rejectValue: string }>('category/delete-category', async (id, thunkAPI) => {
   try {
     return await categoryService.deleteCategory(id);
   } catch (error: any) {
@@ -87,7 +86,6 @@ const categorySlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.createdCategory?.push(action.payload);
       })
       .addCase(createCategory.rejected, (state, action) => {
         state.isLoading = false;

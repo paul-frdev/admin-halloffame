@@ -7,6 +7,8 @@ import colorsReducer from './colorSlice';
 import sizesReducer from './sizeSlice';
 import weightsReducer from './weightSlice';
 import categorySlice from './categorySlice';
+import brandSlice from './brandSlice';
+import productSlice from './productSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +19,8 @@ export const store = configureStore({
     sizes: sizesReducer,
     weights: weightsReducer,
     categories: categorySlice,
+    brands: brandSlice,
+    products: productSlice,
   },
 });
 

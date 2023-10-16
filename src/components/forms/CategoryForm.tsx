@@ -20,11 +20,9 @@ export const CategoryForm = () => {
   const location = useLocation();
   const { isError, isLoading, isSuccess, createdCategory, updatedCategory, categoryName } = useAppSelector((state: RootState) => state.categories)
 
-  
   const navigate = useNavigate();
-  
-  const getCategoryId = location.pathname.split("/")[3];
 
+  const getCategoryId = location.pathname.split("/")[3];
 
   useEffect(() => {
     if (getCategoryId !== undefined) {
@@ -72,27 +70,28 @@ export const CategoryForm = () => {
   return (
     <div>
       <h3 className="mb-4  title">
-        {getCategoryId !== undefined ? "Edit" : "Add"} getCategoryId
+        {getCategoryId !== undefined ? "Edit" : "Add"} category product
       </h3>
       <div>
         <form action="" onSubmit={formik.handleSubmit}>
           <CustomInput
             type="text"
+            label="Enter Blog Title"
             name="category_name"
             onChange={formik.handleChange("category_name")}
             onBlur={formik.handleBlur("category_name")}
             value={formik.values.category_name}
-            label="Enter Category"
             id="category"
-            formikErrors={formik.touched.category_name}
-            formikTouched={formik.errors.category_name}
+            className=''
+            formikErrors={formik.errors.category_name}
+            formikTouched={formik.touched.category_name}
           />
           <Button
             className="btn btn-success border-0 rounded-3 my-5"
             type="submit"
             disabled={isLoading}
           >
-            {getCategoryId !== undefined ? "Edit" : "Add"} Category
+            {getCategoryId !== undefined ? "Edit" : "Add"} Category product
           </Button>
         </form>
       </div>

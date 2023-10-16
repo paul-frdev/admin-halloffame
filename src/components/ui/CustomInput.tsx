@@ -16,7 +16,7 @@ interface CustomInputProps {
 }
 export const CustomInput: React.FC<CustomInputProps> = ({ type = 'text', label, name, value, onChange, onBlur, className, id, formikErrors, formikTouched }) => {
   return (
-    <div className='flex relative justify-start items-start flex-col mt-4 w-full'>
+    <div className='flex relative justify-start items-start flex-col mt-4 w-full mb-4'>
       <label htmlFor={label} className={cn(`mb-1 text-sm pl-2`,  formikTouched && formikErrors ? 'text-[#ef090d]' : '', className)}>{label}</label>
       <input
         id={id}

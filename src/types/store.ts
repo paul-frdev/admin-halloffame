@@ -61,7 +61,6 @@ export interface ColorsState extends BasicState {
   deletedColor?: ColorsData;
 }
 
-
 export interface SizesData {
   sizes_id?: string;
   size_name?: string;
@@ -99,4 +98,40 @@ export interface CategoriesState extends BasicState {
   createdCategory?: CategoriesData[];
   updatedCategory?: CategoriesData[];
   deletedCategory?: CategoriesData;
+}
+
+export interface BrandsData {
+  brand_id?: string;
+  brand_name?: string;
+}
+
+export interface BrandsState extends BasicState {
+  brands?: BrandsData[];
+  brandName?: BrandsData;
+  createdBrand?: BrandsData[];
+  updatedBrand?: BrandsData[];
+  deletedBrand?: BrandsData;
+}
+
+export interface ProductData {
+  product_id?: string;
+  title?: string;
+  description?: string;
+  price: number;
+  discount?: number;
+  isdiscount: boolean;
+  category: string;
+  brands: string;
+  images: string[];
+  colors?: string[];
+  weights?: string[];
+  sizes?: string[];
+}
+
+export interface ProductState extends BasicState {
+  products?: ProductData[];
+  productTitle?: ProductData;
+  createdProduct?: ProductData[];
+  updatedProduct?: ProductData[];
+  deletedProduct?: ProductData[];
 }

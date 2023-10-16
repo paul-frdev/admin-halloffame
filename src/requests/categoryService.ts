@@ -9,10 +9,7 @@ const getCategories = async () => {
 };
 const createCategory = async (category: CategoriesData) => {
 
-  console.log('category', category);
   const response = await axios.post(`${base_url}category/`, category, config);
-
-  console.log('response', response);
   
   return response.data;
 };

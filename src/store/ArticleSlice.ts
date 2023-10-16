@@ -1,6 +1,6 @@
 import articleService from '../requests/articleService';
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
-import { ArticleById, ArticleProps, ArticlesState } from '../types/store';
+import { ArticleProps, ArticlesState } from '../types/store';
 
 export const getArticles = createAsyncThunk('article/get-articles', async (thunkAPI) => {
   try {
