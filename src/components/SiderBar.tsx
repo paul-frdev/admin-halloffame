@@ -5,12 +5,15 @@ import { BiCartAdd } from 'react-icons/bi'
 import { BsCartCheck } from 'react-icons/bs'
 import { GiBoxingGloveSurprise, GiBoxingRing } from 'react-icons/gi'
 import { RiCalendarEventLine } from "react-icons/ri"
-import { MdOutlineEmojiEvents } from 'react-icons/md'
 import { PiFoldersBold } from 'react-icons/pi'
 import { ImBlog } from "react-icons/im";
 import { FaClipboardList, FaBloggerB } from "react-icons/fa";
+import { GiResize } from 'react-icons/gi'
+import { LiaWeightHangingSolid } from 'react-icons/lia'
 import { TbWeight } from 'react-icons/tb'
 import { RiCouponLine } from 'react-icons/ri'
+import { BsTicketDetailed } from 'react-icons/bs'
+import { MdOutlineEventAvailable } from 'react-icons/md'
 import { Logo } from '../icons/Logo';
 import { useNavigate } from 'react-router-dom';
 
@@ -114,12 +117,12 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
               },
               {
                 key: "size",
-                icon: <TbWeight size={20} />,
+                icon: <GiResize size={20} />,
                 label: "Add Size",
               },
               {
                 key: "size-list",
-                icon: <TbWeight size={20} />,
+                icon: <GiResize size={20} />,
                 label: "Size List",
               },
               {
@@ -146,8 +149,18 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
               },
               {
                 key: 'event-list',
-                icon: <MdOutlineEmojiEvents size={20} />,
+                icon: <MdOutlineEventAvailable size={20} />,
                 label: 'Event List',
+              },
+              {
+                key: 'ticket',
+                icon: <BsTicketDetailed size={20} />,
+                label: 'Add Ticket',
+              },
+              {
+                key: 'ticket-list',
+                icon: <BsTicketDetailed size={20} />,
+                label: 'Ticket List',
               },
             ]
           },

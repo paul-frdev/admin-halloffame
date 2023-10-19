@@ -119,10 +119,10 @@ export interface ProductData {
   description?: string;
   price: number;
   discount?: number;
-  isdiscount: boolean;
-  category: string;
-  brands: string;
-  images: string[];
+  isDiscount: boolean;
+  category: string[];
+  brands: string[];
+  images: ImageUrls[];
   colors?: string[];
   weights?: string[];
   sizes?: string[];

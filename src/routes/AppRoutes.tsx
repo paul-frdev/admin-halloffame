@@ -23,6 +23,8 @@ import { Category } from '../pages/Category';
 import { CategoryList } from '../pages/CategoryList';
 import { Brand } from '../pages/Brand';
 import { BrandList } from '../pages/BrandList';
+import { TicketForm } from '../components/forms/TicketForm';
+import { TicketList } from '../pages/TicketList';
 
 
 
@@ -53,6 +55,9 @@ export const AppRoutes = () => {
         <Route path='weight/:id' element={<Weight />} />
         <Route path='weight-list' element={<WeightList />} />
         <Route path='category' element={<Category />} />
+        <Route path='ticket' element={<TicketForm />} />
+        <Route path='ticket/:id' element={<TicketForm />} />
+        <Route path='ticket-list' element={<TicketList />} />
         <Route path='category/:id' element={<Category />} />
         <Route path='category-list' element={<CategoryList />} />
         <Route path='brand' element={<Brand />} />

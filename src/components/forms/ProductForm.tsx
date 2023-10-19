@@ -16,16 +16,17 @@ import { getSizes } from '../../store/sizeSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { ImageUrls } from '../../types/store';
+import { Checkbox } from 'antd';
+import { cn } from '../../lib/utils';
+import { AiOutlineClose } from 'react-icons/ai';
+import { deleteImg, uploadImg } from '../../store/uploadImageSlice';
+import { createProduct } from '../../store/productSlice';
 
 
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
-  description: yup.string().required("Description is Required"),
+  description: yup.string().min(5).required("Description is Required"),
   price: yup.number().required("Price is Required"),
-  color: yup
-    .array()
-    .min(1, "Pick at least one color")
-    .required("Color is Required"),
   quantity: yup.number().required("Quantity is Required"),
 });
 
@@ -33,6 +34,7 @@ interface FormikProps {
   title: string;
   description: string;
   price: number;
+  discountPrice: number;
   quantity: number;
   category: string[];
   brands: string[];
@@ -40,7 +42,7 @@ interface FormikProps {
   tags: string[];
   images: ImageUrls[];
   discount?: number;
-  isdiscount?: boolean;
+  isDiscount: boolean;
   weights?: string[];
   sizes?: string[];
 
@@ -53,6 +55,7 @@ export const ProductForm = () => {
   const [weights, setWeights] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>([])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,9 +67,23 @@ export const ProductForm = () => {
   const weightsState = useAppSelector((state: RootState) => state.weights.weights)
   const sizeState = useAppSelector((state: RootState) => state.sizes.sizes)
   const imageState = useAppSelector((state: RootState) => state.uploadImages.images)
-  const { isError, isLoading, isSuccess, createdProduct, updatedProduct, productTitle } = useAppSelector((state: RootState) => state.products)
+
+  const { isError, isLoading, isSuccess, createdProduct } = useAppSelector((state: RootState) => state.products)
 
   const productId = location.pathname.split("/")[3];
+  const tagState = [{ id: 1, name: 'Populated' }, { id: 2, name: "Featured" }, { id: 3, name: "Special" }] as { id: number, name: string }[]
+  const productImages: ImageUrls[] = [];
+  imageState.forEach((i) => {
+    productImages.push({
+      public_id: i.public_id,
+      url: i.url,
+    });
+  });
+
+
+  console.log('createdProduct', );
+  
+
 
   useEffect(() => {
     dispatch(getBrands());
@@ -77,7 +94,7 @@ export const ProductForm = () => {
   }, []);
 
   useEffect(() => {
-    if (isSuccess && createdProduct) {
+    if (isSuccess && createdProduct?.length! > 0) {
       toast.success("Product Added Successfully!");
     }
     if (isError) {
@@ -85,6 +102,16 @@ export const ProductForm = () => {
     }
   }, [isSuccess, isError, isLoading]);
 
+  useEffect(() => {
+
+    formik.values.colors = colors && colors.length > 0 ? colors : []
+    formik.values.sizes = sizes && sizes.length > 0 ? sizes : []
+    formik.values.brands = brands && brands.length > 0 ? brands : []
+    formik.values.category = categories && categories.length !== 0 ? categories : []
+    formik.values.weights = weights && weights.length > 0 ? weights : []
+    formik.values.tags = tags && tags.length > 0 ? tags : []
+    formik.values.images = productImages && productImages.length > 0 ? productImages : [];
+  }, [brands, categories, colors, sizes, tags, weights]);
 
   const colorOptions: any = [];
   colorState?.forEach((i) => {
@@ -126,21 +153,13 @@ export const ProductForm = () => {
     });
   });
 
-  const images = [];
-  imageState.forEach((i) => {
-    images.push({
-      public_id: i.public_id,
-      url: i.url,
+  const tagOptions: any = [];
+  tagState.forEach((i) => {
+    tagOptions.push({
+      label: i.name,
+      value: i.name,
     });
   });
-
-  useEffect(() => {
-    formik.values.colors = colors.length > 0 ? colors : []
-    formik.values.sizes = sizes.length > 0 ? sizes : []
-    formik.values.brands = brands.length > 0 ? brands : []
-    formik.values.category = categories.length > 0 ? categories : []
-  }, [colors, sizes, brands, categories])
-
 
   const formik = useFormik<FormikProps>({
     initialValues: {
@@ -148,6 +167,8 @@ export const ProductForm = () => {
       description: "",
       price: 0,
       quantity: 0,
+      discountPrice: 0,
+      isDiscount: false,
       category: [],
       brands: [],
       tags: [],
@@ -159,6 +180,7 @@ export const ProductForm = () => {
     validationSchema: schema,
     onSubmit: (values) => {
       console.log('values', values);
+      dispatch(createProduct(values))
     },
   });
 
@@ -178,13 +200,53 @@ export const ProductForm = () => {
     setBrands(e)
   }
 
-  const handleCategory = (e:  string[]) => {
+  const handleCategory = (e: string[]) => {
     setCategories(e)
   }
+
+  const handleTag = (e: string[]) => {
+    setTags(e)
+  }
+
+  console.log('formik.values', formik.values);
   return (
     <div>
       <h3 className="mb-4 title">Add Product</h3>
-      <form action="" onSubmit={formik.handleSubmit} className='flex flex-col gap-3'>
+      <form action="" onSubmit={formik.handleSubmit} className='flex flex-col gap-3 relative'>
+        {productImages.length === 0 && <span className='absolute -top-[33px] text-[16px] text-[#ff0000] right-0'>First of all, download images then add other properties that required below!!!</span>}
+        <div className=" relative bg-white border-1 p-5 text-center mt-3 rounded-md">
+          <Dropzone
+            onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div {...getRootProps()} className=' rounded-sm'>
+                  <input {...getInputProps()} />
+                  <p className='mb-0 p-4 text-lg border-2 border-[#999999] border-dashed rounded-sm cursor-pointer bg-white'>
+                    Drag 'n' drop some files here, or click to select files
+                  </p>
+                </div>
+              </section>
+            )}
+          </Dropzone>
+        </div>
+        <div className="showimages flex flex-wrap mt-3 gap-3">
+          {imageState?.map((image, j) => {
+            return (
+              <div className="relative max-w-fit" key={j}>
+                <button
+                  type="button"
+                  onClick={() => dispatch(deleteImg(image.public_id))}
+                  className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
+                  style={{ top: "10px", right: "10px" }}
+                >
+                  <AiOutlineClose size={24} />
+                </button>
+                <img src={image.url} alt="img" width={200} height={200} />
+              </div>
+            );
+          })}
+        </div>
         <CustomInput
           type='text'
           label='Enter Product title'
@@ -197,7 +259,7 @@ export const ProductForm = () => {
         />
         <QuillEditor
           theme='snow'
-          onChange={() => formik.handleChange("description")}
+          onChange={formik.handleChange("description")}
           value={formik.values.description}
           formikErrors={formik.errors.description}
           formikTouched={formik.touched.description}
@@ -222,6 +284,27 @@ export const ProductForm = () => {
           formikTouched={formik.touched.quantity}
           formikErrors={formik.errors.quantity}
         />
+        <div>
+          <Checkbox
+            name="isDiscount"
+            onChange={(e) => formik.setFieldValue('isDiscount', e.target.checked)}
+            className=' uppercase'
+          >
+            Is Discount
+          </Checkbox>
+          <CustomInput
+            type="number"
+            label="Enter discount price"
+            name="discountPrice"
+            className={cn(`mt-2`, !formik.values.isDiscount && 'pointer-events-none opacity-50')}
+            onChange={formik.handleChange("discountPrice")}
+            onBlur={formik.handleBlur("discountPrice")}
+            value={formik.values.discountPrice.toString()}
+            formikTouched={formik.touched.discountPrice}
+            formikErrors={formik.errors.discountPrice}
+          />
+        </div>
+
         <Select
           name='sizes'
           mode="multiple"
@@ -269,6 +352,17 @@ export const ProductForm = () => {
           formikErrors={formik.errors.brands}
           formikTouched={formik.touched.brands}
           label='Select Brands'
+        />
+        <Select
+          name='tags'
+          optionItems={tagOptions}
+          defaultValue={tags}
+          onChange={(e: string[]) => handleTag(e)}
+          valueSelect={formik.values.tags?.[0]}
+          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
+          formikErrors={formik.errors.tags}
+          formikTouched={formik.touched.tags}
+          label='Select Tag'
         />
         <Select
           name='category'

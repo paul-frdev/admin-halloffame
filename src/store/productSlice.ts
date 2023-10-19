@@ -2,16 +2,16 @@ import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import productService from '../requests/productService';
 import { ProductData, ProductState } from '../types/store';
 
-export const getProducts = createAsyncThunk<undefined, undefined, { rejectValue: string }>('product/get-products', async (_, thunkAPI) => {
+export const getProducts = createAsyncThunk('product/get-product', async (thunkAPI) => {
   try {
     return await productService.getProducts();
   } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
+    console.log(error);
   }
 });
 
-export const createProducts = createAsyncThunk<ProductData, ProductData, { rejectValue: string }>(
-  'product/create-products',
+export const createProduct = createAsyncThunk<ProductData, ProductData, { rejectValue: string }>(
+  'product/create-product',
   async (productData, thunkAPI) => {
     try {
       return await productService.createProduct(productData);
@@ -54,16 +54,16 @@ const productSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      .addCase(createProducts.pending, (state) => {
+      .addCase(createProduct.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createProducts.fulfilled, (state, action) => {
+      .addCase(createProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.createdProduct?.push(action.payload);
       })
-      .addCase(createProducts.rejected, (state, action) => {
+      .addCase(createProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

@@ -87,3 +87,7 @@ main::-webkit-scrollbar {
   line-height: normal;
   letter-spacing: normal;
 }
+
+.ant-checkbox-wrapper {
+  /* margin-bottom: -10px; */
+}

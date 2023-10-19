@@ -16,11 +16,19 @@ interface CustomInputProps {
 }
 export const CustomInput: React.FC<CustomInputProps> = ({ type = 'text', label, name, value, onChange, onBlur, className, id, formikErrors, formikTouched }) => {
   return (
-    <div className='flex relative justify-start items-start flex-col mt-4 w-full mb-4'>
-      <label htmlFor={label} className={cn(`mb-1 text-sm pl-2`,  formikTouched && formikErrors ? 'text-[#ef090d]' : '', className)}>{label}</label>
+    <div className={cn(`flex relative justify-start items-start flex-col mt-4 w-full mb-4`, className)}>
+      <label htmlFor={label} className={cn(`mb-1 text-sm pl-2`,
+        formikTouched && formikErrors ? 'text-[#ef090d]' : '',
+        className)
+      }>
+        {label}
+      </label>
       <input
         id={id}
-        className={cn(`text-md py-4 w-full px-2 outline-none border-2 rounded-md`, formikTouched && formikErrors ? 'border-[#ef090d]' : 'border-[#999999]', className)}
+        className={cn(`text-md py-4 w-full px-2 outline-none border-2 rounded-md`,
+          formikTouched && formikErrors ? 'border-[#ef090d]' : 'border-[#acacac]',
+          className)
+        }
         type={type}
         placeholder={label}
         name={name}
