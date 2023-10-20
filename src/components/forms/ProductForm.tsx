@@ -21,6 +21,7 @@ import { cn } from '../../lib/utils';
 import { AiOutlineClose } from 'react-icons/ai';
 import { deleteImg, uploadImg } from '../../store/uploadImageSlice';
 import { createProduct } from '../../store/productSlice';
+import { UploadImages } from '../ui/UploadImages';
 
 
 let schema = yup.object().shape({
@@ -81,8 +82,8 @@ export const ProductForm = () => {
   });
 
 
-  console.log('createdProduct', );
-  
+  console.log('createdProduct',);
+
 
 
   useEffect(() => {
@@ -214,22 +215,7 @@ export const ProductForm = () => {
       <h3 className="mb-4 title">Add Product</h3>
       <form action="" onSubmit={formik.handleSubmit} className='flex flex-col gap-3 relative'>
         {productImages.length === 0 && <span className='absolute -top-[33px] text-[16px] text-[#ff0000] right-0'>First of all, download images then add other properties that required below!!!</span>}
-        <div className=" relative bg-white border-1 p-5 text-center mt-3 rounded-md">
-          <Dropzone
-            onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div {...getRootProps()} className=' rounded-sm'>
-                  <input {...getInputProps()} />
-                  <p className='mb-0 p-4 text-lg border-2 border-[#999999] border-dashed rounded-sm cursor-pointer bg-white'>
-                    Drag 'n' drop some files here, or click to select files
-                  </p>
-                </div>
-              </section>
-            )}
-          </Dropzone>
-        </div>
+        <UploadImages />
         <div className="showimages flex flex-wrap mt-3 gap-3">
           {imageState?.map((image, j) => {
             return (

@@ -17,14 +17,16 @@ import { Weight } from '../pages/Weight';
 import { ColorList } from '../pages/ColorList';
 import { SizeList } from '../pages/SizeList';
 import { WeightList } from '../pages/WeightList';
-import { ProductForm } from '../components/forms/ProductForm';
 import { ProductList } from '../pages/ProductList';
 import { Category } from '../pages/Category';
 import { CategoryList } from '../pages/CategoryList';
 import { Brand } from '../pages/Brand';
 import { BrandList } from '../pages/BrandList';
-import { TicketForm } from '../components/forms/TicketForm';
 import { TicketList } from '../pages/TicketList';
+import { Event } from '../pages/Event';
+import { Ticket } from '../pages/Ticket';
+import { EventList } from '../pages/EventList';
+import { Product } from '../pages/Product';
 
 
 
@@ -55,8 +57,11 @@ export const AppRoutes = () => {
         <Route path='weight/:id' element={<Weight />} />
         <Route path='weight-list' element={<WeightList />} />
         <Route path='category' element={<Category />} />
-        <Route path='ticket' element={<TicketForm />} />
-        <Route path='ticket/:id' element={<TicketForm />} />
+        <Route path='event' element={<Event />} />
+        <Route path='event/:id' element={<Event />} />
+        <Route path='event-list' element={<EventList />} />
+        <Route path='ticket' element={<Ticket />} />
+        <Route path='ticket/:id' element={<Ticket />} />
         <Route path='ticket-list' element={<TicketList />} />
         <Route path='category/:id' element={<Category />} />
         <Route path='category-list' element={<CategoryList />} />
@@ -64,8 +69,8 @@ export const AppRoutes = () => {
         <Route path='brand/:id' element={<Brand />} />
         <Route path='brand-list' element={<BrandList />} />
         <Route path='category' element={<Category />} />
-        <Route path='product' element={<ProductForm />} />
-        <Route path='product/:id' element={<ProductForm />} />
+        <Route path='product' element={<Product />} />
+        <Route path='product/:id' element={<Product />} />
         <Route path='product-list' element={<ProductList />} />
         <Route path='blog-category' element={<BlogCategory />} />
         <Route path="blog-category/:id" element={<BlogCategory />} />

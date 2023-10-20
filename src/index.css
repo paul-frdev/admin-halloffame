@@ -88,6 +88,6 @@ main::-webkit-scrollbar {
   letter-spacing: normal;
 }
 
-.ant-checkbox-wrapper {
-  /* margin-bottom: -10px; */
+.controls input {
+  border: none;
 }
