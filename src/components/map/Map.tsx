@@ -13,7 +13,11 @@ import { DirectionsResult, LatLngLiteral, MapOptions } from '../../types/map';
 import { closeOptions, generateHouses } from './config';
 
 
-export const Map = () => {
+interface MapProps {
+  setSelectedAddress: (e: string) => void;
+}
+
+export const Map: React.FC<MapProps> = ({ setSelectedAddress }) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: ["places"],
@@ -22,20 +26,18 @@ export const Map = () => {
   const [office, setOffice] = useState<LatLngLiteral>();
   const [directions, setDirections] = useState<DirectionsResult>();
   const mapRef = useRef<GoogleMap>();
-  const center = useMemo<LatLngLiteral>(() => ({ lat: 43.45, lng: -80.49 }), []);
+  const center = useMemo<LatLngLiteral>(() => ({ lat: 50.4501, lng: 30.5234 }), []);
   const options = useMemo<MapOptions>(() => ({
-    mapId: "b181cac70f27f5e6",
+    mapId: "3f5947443e61e6f9",
     disableDefaultUI: true,
     clickableIcons: false,
   }), []);
   const onLoad = useCallback((map: any) => (mapRef.current = map), []);
-  const houses: any = useMemo(() => generateHouses(center), [center]);
-
-  // console.log('center', center);
-
-  // console.log('houses', houses, 'onLoad', onLoad, 'options', options, 'center', center, 'office', office, 'directions', directions, 'isLoaded', isLoaded);
+  const houses = useMemo(() => generateHouses(center), [center]);
 
   const fetchDirections = (house: LatLngLiteral) => {
+    console.log('fetchDirections');
+
     if (!office) return;
 
     const service = new google.maps.DirectionsService();
@@ -63,8 +65,9 @@ export const Map = () => {
   }
   return (
     <div className=" relative flex w-full h-[500px]">
-      <div className=" absolute top-0 left-0 w-[400px] h-[100px] z-10  p-4 bg-transparent text-black border-none">
+      <div className=" absolute top-0 left-0 w-[400px] h-[50px] z-10  p-4 bg-transparent text-black border-none">
         <Places
+          setSelectedAddress={setSelectedAddress}
           setOffice={(position) => {
             setOffice(position);
             mapRef.current?.panTo(position);
@@ -102,18 +105,20 @@ export const Map = () => {
 
               <MarkerClusterer>
                 {(clusterer) =>
-                  houses.map((house: LatLngLiteral) => (
-                    <Marker
-                      key={house.lat}
-                      position={house}
-                      clusterer={clusterer}
-                      onClick={() => { fetchDirections(house) }}
-                    />
-                  ))
+                  houses.map((house) => {
+                    return (
+                      <Marker
+                        key={house.lat}
+                        position={house}
+                        clusterer={clusterer}
+                        onClick={() => { fetchDirections(house) }}
+                      />
+                    )
+                  }) as any
                 }
               </MarkerClusterer>
 
-              <Circle center={office} radius={50} options={closeOptions} />
+              <Circle center={office} radius={100} options={closeOptions} />
             </>
           )}
         </GoogleMap>

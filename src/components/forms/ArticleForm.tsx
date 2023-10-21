@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import * as yup from "yup";
 import ReactQuill from "react-quill";
-import Dropzone from "react-dropzone";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 
@@ -9,10 +8,9 @@ import "react-quill/dist/quill.snow.css";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { getCategories, resetState } from '../../store/blogCategorySlice';
 import { CustomInput } from '../ui/CustomInput';
-import { uploadImg, deleteImg } from '../../store/uploadImageSlice';
 import { Button } from '../ui/Button';
 import { createArticle, getArticleById } from '../../store/articleSlice';
-import { AiOutlineClose } from "react-icons/ai";
+import { UploadImages } from '../ui/UploadImages';
 
 
 let schema = yup.object().shape({
@@ -162,40 +160,7 @@ export const ArticleForm = () => {
             {formik.touched.description && formik.errors.description}
           </div>
         </div>
-        <div className=" relative bg-white border-1 p-5 text-center mt-3 rounded-md">
-          <Dropzone
-            onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div {...getRootProps()} className=' rounded-sm'>
-                  <input {...getInputProps()} />
-                  <p className='mb-0 p-4 text-lg border-2 border-[#999999] border-dashed rounded-sm cursor-pointer bg-white'>
-                    Drag 'n' drop some files here, or click to select files
-                  </p>
-                </div>
-              </section>
-            )}
-          </Dropzone>
-        </div>
-        <div className="showimages flex flex-wrap mt-3 gap-3">
-          {ImageState?.map((image, j) => {
-            return (
-              <div className="relative max-w-fit" key={j}>
-                <button
-                  type="button"
-                  onClick={() => dispatch(deleteImg(image.public_id))}
-                  className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
-                  style={{ top: "10px", right: "10px" }}
-                >
-                  <AiOutlineClose size={24} />
-                </button>
-                <img src={image.url} alt="img" width={200} height={200} />
-              </div>
-            );
-          })}
-        </div>
-
+        <UploadImages />
         <Button
           className="btn btn-success border-0 rounded-3 my-5"
           type="submit"

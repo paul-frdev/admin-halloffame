@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Link, useLocation } from 'react-router-dom'
+import { format } from "date-fns";
+import { useLocation } from 'react-router-dom'
+import { enUS } from "date-fns/locale";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { ImageUrls } from '../../types/store';
@@ -9,6 +11,9 @@ import { UploadImages } from '../ui/UploadImages';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { Map } from '../map/Map';
+import { Calendar } from '../calendar/Calendar';
+import { TCalendarValue } from '../../types/calendar';
+import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 
 const schema = yup.object().shape({
   title: yup.string().required("Category Name is Required"),
@@ -17,7 +22,7 @@ const schema = yup.object().shape({
 interface FormikProps {
   title: string;
   descriptionText: string;
-  Date?: Date;
+  date?: string;
   time: string[];
   image: ImageUrls[];
   location: string;
@@ -27,15 +32,18 @@ interface FormikProps {
   childrenQuantityTickets: number;
 }
 
-const timePicker = [{ id: 1, time: "10:00" }, { id: 1, time: "11:00" }, { id: 1, time: "12:00" }, { id: 1, time: "13:00" }, { id: 1, time: "14:00" }, { id: 1, time: "15:00" }, { id: 1, time: "16:00" }, { id: 1, time: "17:00" }, { id: 1, time: "18:00" }, { id: 1, time: "19:00" }, { id: 1, time: "20:00" }, { id: 1, time: "21:00" }]
+const timePicker = [{ id: 1, time: "10:00" }, { id: 2, time: "11:00" }, { id: 2, time: "12:00" }, { id: 3, time: "13:00" }, { id: 4, time: "14:00" }, { id: 5, time: "15:00" }, { id: 6, time: "16:00" }, { id: 7, time: "17:00" }, { id: 8, time: "18:00" }, { id: 9, time: "19:00" }, { id: 10, time: "20:00" }, { id: 11, time: "21:00" }]
 
 export const EventForm = () => {
 
-  const [selectedTime, setSelectedTime] = useState<string[]>([])
+  const [selectedTime, setSelectedTime] = useState<string[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<string>('');
+  const [valueCalendar, setValueCalendar] = useState<TCalendarValue>(new Date());
 
   const location = useLocation()
 
-  const eventId = location.pathname.split("/")[3];
+  const formattedValueCalendar = valueCalendar && !Array.isArray(valueCalendar) ? format(valueCalendar, "dd.MM.yyyy", { locale: enUS }) : "";
+
 
   const formik = useFormik<FormikProps>({
     enableReinitialize: true,
@@ -48,7 +56,8 @@ export const EventForm = () => {
       adultPrice: 0,
       childPrice: 0,
       adultQuantityTickets: 0,
-      childrenQuantityTickets: 0
+      childrenQuantityTickets: 0,
+      date: ''
     },
     validationSchema: schema,
     onSubmit: async (values) => {
@@ -56,6 +65,16 @@ export const EventForm = () => {
 
     },
   });
+
+
+  const eventId = location.pathname.split("/")[3];
+
+  useEffect(() => {
+    formik.values.location = selectedAddress && selectedAddress.length > 0 ? selectedAddress : ""
+    formik.values.date = formattedValueCalendar && formattedValueCalendar.length > 0 ? formattedValueCalendar : ''
+  }, [formattedValueCalendar, selectedAddress]);
+
+  console.log('formik.values', formik.values);
 
   const handleTime = (e: string[]) => {
     setSelectedTime(e)
@@ -87,7 +106,7 @@ export const EventForm = () => {
           formikErrors={formik.errors.descriptionText}
         />
         <div className='mb-2'>Enter Event location</div>
-        <Map />
+        <Map setSelectedAddress={setSelectedAddress} />
         <CustomInput
           type='number'
           label='Enter Event price for adults'
@@ -140,9 +159,11 @@ export const EventForm = () => {
           formikTouched={formik.touched.time}
           name='time'
         />
-        <div>
-          {/* Date picker */}
-        </div>
+        <>
+          <div>Select date event</div>
+          <Calendar locale={enUS.code} onChange={setValueCalendar} value={valueCalendar} />
+          <pre>{JSON.stringify(formattedValueCalendar, null, 2)}</pre>
+        </>
         <Button
           className="btn btn-success border-0 rounded-3 my-5"
           type="submit"

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import Dropzone from "react-dropzone";
 import { CustomInput } from '../ui/CustomInput';
 import { QuillEditor } from '../ui/QuillEditor';
 import { Select } from '../ui/Select';
@@ -18,8 +17,6 @@ import { Button } from '../ui/Button';
 import { ImageUrls } from '../../types/store';
 import { Checkbox } from 'antd';
 import { cn } from '../../lib/utils';
-import { AiOutlineClose } from 'react-icons/ai';
-import { deleteImg, uploadImg } from '../../store/uploadImageSlice';
 import { createProduct } from '../../store/productSlice';
 import { UploadImages } from '../ui/UploadImages';
 
@@ -81,11 +78,6 @@ export const ProductForm = () => {
     });
   });
 
-
-  console.log('createdProduct',);
-
-
-
   useEffect(() => {
     dispatch(getBrands());
     dispatch(getCategories());
@@ -104,7 +96,6 @@ export const ProductForm = () => {
   }, [isSuccess, isError, isLoading]);
 
   useEffect(() => {
-
     formik.values.colors = colors && colors.length > 0 ? colors : []
     formik.values.sizes = sizes && sizes.length > 0 ? sizes : []
     formik.values.brands = brands && brands.length > 0 ? brands : []
@@ -216,23 +207,6 @@ export const ProductForm = () => {
       <form action="" onSubmit={formik.handleSubmit} className='flex flex-col gap-3 relative'>
         {productImages.length === 0 && <span className='absolute -top-[33px] text-[16px] text-[#ff0000] right-0'>First of all, download images then add other properties that required below!!!</span>}
         <UploadImages />
-        <div className="showimages flex flex-wrap mt-3 gap-3">
-          {imageState?.map((image, j) => {
-            return (
-              <div className="relative max-w-fit" key={j}>
-                <button
-                  type="button"
-                  onClick={() => dispatch(deleteImg(image.public_id))}
-                  className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
-                  style={{ top: "10px", right: "10px" }}
-                >
-                  <AiOutlineClose size={24} />
-                </button>
-                <img src={image.url} alt="img" width={200} height={200} />
-              </div>
-            );
-          })}
-        </div>
         <CustomInput
           type='text'
           label='Enter Product title'

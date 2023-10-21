@@ -14,9 +14,10 @@ import "@reach/combobox/styles.css";
 
 type PlacesProps = {
   setOffice: (position: google.maps.LatLngLiteral) => void;
+  setSelectedAddress: (e: string) => void;
 };
 
-export const Places = ({ setOffice }: PlacesProps) => {
+export const Places = ({ setOffice, setSelectedAddress }: PlacesProps) => {
   const {
     ready,
     value,
@@ -25,8 +26,9 @@ export const Places = ({ setOffice }: PlacesProps) => {
     clearSuggestions,
   } = usePlacesAutocomplete();
 
-  const handleSelect = async (val: string) => {
+  const handleSelect = async (val: string) => {    
     setValue(val, false);
+    setSelectedAddress(val)
     clearSuggestions();
 
     const results = await getGeocode({ address: val });
@@ -40,7 +42,7 @@ export const Places = ({ setOffice }: PlacesProps) => {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         disabled={!ready}
-        className="w-full p-2 outline-none rounded-md"
+        className="w-full p-2 outline-none rounded-md shadow-lg"
         placeholder="Search location"
       />
       <ComboboxPopover>
