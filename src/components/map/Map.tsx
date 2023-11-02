@@ -11,13 +11,17 @@ import { Places } from './Places';
 import { Distance } from './Distance';
 import { DirectionsResult, LatLngLiteral, MapOptions } from '../../types/map';
 import { closeOptions, generateHouses } from './config';
+import { FieldError } from 'react-hook-form';
 
 
 interface MapProps {
   setSelectedAddress: (e: string) => void;
+  name?: string;
+  error?: FieldError;
+  className?: string;
 }
 
-export const Map: React.FC<MapProps> = ({ setSelectedAddress }) => {
+export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, className }) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: ["places"],
@@ -64,9 +68,11 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress }) => {
     return <span>Loading...</span>
   }
   return (
-    <div className=" relative flex w-full h-[500px]">
+    <div className=" relative flex w-full h-[500px] mb-8">
       <div className=" absolute top-0 left-0 w-[400px] h-[50px] z-10  p-4 bg-transparent text-black border-none">
         <Places
+          error={error}
+          name={name}
           setSelectedAddress={setSelectedAddress}
           setOffice={(position) => {
             setOffice(position);

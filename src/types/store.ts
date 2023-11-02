@@ -46,6 +46,7 @@ export interface ImageUrls {
 
 export interface ImageProps extends BasicState {
   images: ImageUrls[];
+  updatedImage?: any;
 }
 
 export interface ColorsData {

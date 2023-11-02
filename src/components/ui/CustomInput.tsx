@@ -13,10 +13,12 @@ interface CustomInputProps {
   onBlur?: (data: any) => void;
   formikTouched?: any;
   formikErrors?: any;
+  disabled?: boolean;
 }
-export const CustomInput: React.FC<CustomInputProps> = ({ type = 'text', label, name, value, onChange, onBlur, className, id, formikErrors, formikTouched }) => {
+export const CustomInput: React.FC<CustomInputProps> = ({ type = 'text', disabled = false, label, name, value, onChange, onBlur, className, id, formikErrors, formikTouched }) => {
+
   return (
-    <div className={cn(`flex relative justify-start items-start flex-col mt-4 w-full mb-4`, className)}>
+    <div className={cn(`flex relative justify-start items-start flex-col mt-4 w-full mb-4`, className, disabled && 'pointer-events-none opacity-75')}>
       <label htmlFor={label} className={cn(`mb-1 text-sm pl-2`,
         formikTouched && formikErrors ? 'text-[#ef090d]' : '',
         className)

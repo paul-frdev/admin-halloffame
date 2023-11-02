@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import * as yup from "yup";
-import ReactQuill from "react-quill";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-
-import "react-quill/dist/quill.snow.css";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { getCategories, resetState } from '../../store/blogCategorySlice';
 import { CustomInput } from '../ui/CustomInput';
 import { Button } from '../ui/Button';
 import { createArticle, getArticleById } from '../../store/articleSlice';
-import { UploadImages } from '../ui/UploadImages';
+import { UploadImages } from '../common/UploadImages';
+import { RichEditor } from '../common/RichEditor';
+import { Select } from '../ui/Select';
 
 
 let schema = yup.object().shape({
@@ -19,44 +18,10 @@ let schema = yup.object().shape({
   categoryId: yup.string().required("Category is Required"),
 });
 
-const myColors = [
-  "purple",
-  "#785412",
-  "#452632",
-  "#856325",
-  "#963254",
-  "#254563",
-  "white"
-];
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [{ align: ["right", "center", "justify"] }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ color: myColors }],
-    [{ background: myColors }]
-  ]
-};
-
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "link",
-  "color",
-  "background",
-  "align"
-];
-
 export const ArticleForm = () => {
 
   const [curArticleId, setCurArticleId] = useState<any>()
+  const [categories, setCategories] = useState<string[]>([])
 
 
   const location = useLocation();
@@ -93,19 +58,40 @@ export const ArticleForm = () => {
   }, []);
 
 
+  useEffect(() => {
+    formik.values.categoryId = categories && categories.length !== 0 ? categories : []
+  }, [categories])
+
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       title: curArticleId ? curArticleId.title as string : "",
       description: curArticleId ? curArticleId.description as string : "",
-      categoryId: curArticleId ? curArticleId.cat_title as string : "",
+      categoryId: curArticleId ? curArticleId.cat_title as any : "",
       images: imagesCloudinary,
     },
     validationSchema: schema,
     onSubmit: (values) => {
       dispatch(createArticle(values));
+      dispatch(resetState())
     },
   });
+
+  const categoryOptions: any = [];
+  blogCategories?.forEach((i) => {
+    categoryOptions.push({
+      label: i.title,
+      value: i.category_id,
+    });
+  });
+
+  const handleCategory = (e: string[]) => {
+    setCategories(e)
+  }
+
+  console.log('formik', formik.values.description.length);
+
 
   return (
     <div>
@@ -113,60 +99,38 @@ export const ArticleForm = () => {
         {articleById !== undefined ? "Edit" : "Add"} Blog
       </h3>
       <form action="" onSubmit={formik.handleSubmit}>
-        <div className='relative mt-8'>
-          <CustomInput
-            type="text"
-            label="Enter Blog Title"
-            name="title"
-            onChange={formik.handleChange("title")}
-            onBlur={formik.handleBlur("title")}
-            value={formik.values.title}
-          />
-          <div className="absolute -bottom-[18px] left-[8px] text-[#ef090d]">
-            {formik.touched.title && formik.errors.title}
-          </div>
-        </div>
-        <div className='relative'>
-          <select
-            name="categoryId"
-            onChange={formik.handleChange("categoryId")}
-            onBlur={formik.handleBlur("categoryId")}
-            value={formik.values.categoryId}
-            className=" border px-4 border-[#999999] rounded-md form-control py-3  mt-8"
-          >
-            <option>Select Blog Category</option>
-            {blogCategories.map((i, j) => {
-              return (
-                <option key={j} value={i.category_id}>
-                  {i.title}
-                </option>
-              );
-            })}
-          </select>
-          <span className="absolute -bottom-[18px] left-[8px] text-[#ef090d]">
-            {formik.touched.categoryId && formik.errors.categoryId}
-          </span>
-        </div>
-        <div className='relative mt-8'>
-          <ReactQuill
-            theme="snow"
-            className="my-8"
-            modules={modules}
-            formats={formats}
-            onChange={formik.handleChange("description")}
-            value={formik.values.description}
-          />
-          <div className="absolute -bottom-[18px] left-[8px] text-[#ef090d]">
-            {formik.touched.description && formik.errors.description}
-          </div>
-        </div>
         <UploadImages />
-        <Button
-          className="btn btn-success border-0 rounded-3 my-5"
-          type="submit"
-        >
-          {articleById !== undefined ? "Edit" : "Add"} Article
-        </Button>
+        <CustomInput
+          type="text"
+          label="Enter Blog Title"
+          name="title"
+          onChange={formik.handleChange("title")}
+          onBlur={formik.handleBlur("title")}
+          value={formik.values.title}
+        />
+        <RichEditor
+          onChange={formik.handleChange("description")}
+          value={formik.values.description}
+        />
+        <Select
+          name='category'
+          optionItems={categoryOptions}
+          defaultValue={categories}
+          onChange={(e: string[]) => handleCategory(e)}
+          valueSelect={formik.values.categoryId?.[0]}
+          className='min-w-[240px] max-w-[450px] py-3 mb-3'
+          formikErrors={formik.errors.categoryId}
+          formikTouched={formik.touched.categoryId}
+          label='Select Category'
+        />
+        <div>
+          <Button
+            className="btn btn-success border-0 rounded-3 my-5"
+            type="submit"
+          >
+            {articleById !== undefined ? "Edit" : "Add"} Article
+          </Button>
+        </div>
       </form>
     </div>
   )

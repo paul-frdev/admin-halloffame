@@ -4,27 +4,65 @@ import { format } from "date-fns";
 import { useLocation } from 'react-router-dom'
 import { enUS } from "date-fns/locale";
 import * as yup from "yup";
-import { useFormik } from "formik";
 import { ImageUrls } from '../../types/store';
-import { CustomInput } from '../ui/CustomInput';
-import { UploadImages } from '../ui/UploadImages';
-import { Button } from '../ui/Button';
-import { Select } from '../ui/Select';
+import { ImagesProps, UploadImages } from '../common/UploadImages';
+
 import { Map } from '../map/Map';
 import { Calendar } from '../calendar/Calendar';
 import { TCalendarValue } from '../../types/calendar';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
+import { IOption } from '../../types';
+import { FormItem } from '../ui/FormItem';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Button, Form, Input, Select } from 'antd';
+import ReactQuill from 'react-quill';
+import { cn } from '../../lib/utils';
+import { Title } from '../ui/Title';
 
-const schema = yup.object().shape({
-  title: yup.string().required("Category Name is Required"),
+
+const validationSchema = yup.object().shape({
+  title: yup.string().required('Required field'),
+  descriptionText: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
+  address: yup.string().required('Address field is required'),
+  date: yup.string().required('Required field'),
+  adultPrice: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
+  childPrice: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
+  adultQuantityTickets: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
+  childrenQuantityTickets: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
+  time: yup.array().min(1, 'At least one time selection is required').of(
+    yup.string().required('At least one time selection is required')
+  ).required('At least one time selection is required'),
+  images: yup.array().of(
+    yup.object().shape({
+      public_id: yup.string().required('Public ID is required'),
+      url: yup.string().required('Image URL is required'),
+    })
+  ).test('at-least-one-image', 'At least one image is required', function (value) {
+    if (!value || value.length === 0) {
+      return false; 
+    }
+    return true;
+  }).required('At least one image is required'),
+  ticketImgs: yup.array().of(
+    yup.object().shape({
+      public_id: yup.string().required('Public ID is required'),
+      url: yup.string().required('Image URL is required'),
+    })
+  ).test('at-least-one-image', 'At least one image is required', function (value) {
+    if (!value || value.length === 0) {
+      return false; 
+    }
+    return true;
+  }).required('At least one image is required'),
 });
-
-interface FormikProps {
+interface EventFormProps {
   title: string;
   descriptionText: string;
   date?: string;
-  time: string[];
-  image: ImageUrls[];
+  time: IOption[] | null;
+  images: ImageUrls[];
+  ticketImg: ImageUrls[];
   location: string;
   adultPrice: number;
   childPrice: number;
@@ -32,146 +70,116 @@ interface FormikProps {
   childrenQuantityTickets: number;
 }
 
-const timePicker = [{ id: 1, time: "10:00" }, { id: 2, time: "11:00" }, { id: 2, time: "12:00" }, { id: 3, time: "13:00" }, { id: 4, time: "14:00" }, { id: 5, time: "15:00" }, { id: 6, time: "16:00" }, { id: 7, time: "17:00" }, { id: 8, time: "18:00" }, { id: 9, time: "19:00" }, { id: 10, time: "20:00" }, { id: 11, time: "21:00" }]
+const timePicker: IOption[] = [{ value: "10:00", label: "10:00" }, { value: "11:00", label: "11:00" }, { value: "12:00", label: "12:00" }, { value: "13:00", label: "13:00" }, { value: "14:00", label: "14:00" }, { value: "15:00", label: "15:00" }, { value: "16:00", label: "16:00" }, { value: "17:00", label: "17:00" }, { value: "18:00", label: "18:00" }, { value: "19:00", label: "19:00" }, { value: "20:00", label: "20:00" }, { value: "21:00", label: "21:00" }]
 
 export const EventForm = () => {
 
-  const [selectedTime, setSelectedTime] = useState<string[]>([]);
-  const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [valueCalendar, setValueCalendar] = useState<TCalendarValue>(new Date());
 
   const location = useLocation()
 
-  const formattedValueCalendar = valueCalendar && !Array.isArray(valueCalendar) ? format(valueCalendar, "dd.MM.yyyy", { locale: enUS }) : "";
+  const dispatch = useAppDispatch()
 
-
-  const formik = useFormik<FormikProps>({
-    enableReinitialize: true,
-    initialValues: {
-      title: "",
-      descriptionText: "",
-      time: [],
-      image: [],
-      location: "",
+  const { control, handleSubmit, formState: { errors }, setValue, getValues, register } = useForm({
+    defaultValues: {
+      title: '',
+      descriptionText: '',
+      address: '',
+      date: '',
       adultPrice: 0,
       childPrice: 0,
       adultQuantityTickets: 0,
       childrenQuantityTickets: 0,
-      date: ''
+      time: [],
+      images: []
     },
-    validationSchema: schema,
-    onSubmit: async (values) => {
-      console.log(values);
-
-    },
+    resolver: yupResolver(validationSchema),
   });
 
+  const onSubmit: SubmitHandler<any> = (data) => {
+    console.log(data)
+  }
+
+  const onImageUpload = (uploadedImages: ImagesProps[]) => {
+
+    const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
+    setValue('images', simplifiedImagesUrls, { shouldValidate: true });
+
+    return simplifiedImagesUrls
+  }
 
   const eventId = location.pathname.split("/")[3];
 
-  useEffect(() => {
-    formik.values.location = selectedAddress && selectedAddress.length > 0 ? selectedAddress : ""
-    formik.values.date = formattedValueCalendar && formattedValueCalendar.length > 0 ? formattedValueCalendar : ''
-  }, [formattedValueCalendar, selectedAddress]);
-
-  console.log('formik.values', formik.values);
-
-  const handleTime = (e: string[]) => {
-    setSelectedTime(e)
+  const onDateSelect = (selectedDate: TCalendarValue) => {
+    setValueCalendar(selectedDate);
+    const formattedDate = selectedDate && !Array.isArray(selectedDate) ? format(selectedDate, "dd.MM.yyyy", { locale: enUS }) : "";;
+    setValue('date', formattedDate);
   }
+
+  console.log('errors', errors);
 
   return (
     <div>
-      <h2 className='text-2xl font-semibold mb-6'>Create a new event</h2>
-      <form action="" onChange={formik.handleSubmit}>
-        <UploadImages />
-        <CustomInput
-          type='text'
-          label='Enter Event title'
-          name='title'
-          onChange={formik.handleChange("title")}
-          onBlur={formik.handleBlur("title")}
-          value={formik.values.title}
-          formikTouched={formik.touched.title}
-          formikErrors={formik.errors.title}
+      <Title level={3}>{eventId !== undefined ? "Edit" : "Add"} Event</Title>
+      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}
+      >
+        <Title className=' lowercase !text-[#ff4d4f]' level={5}>First of all, upload image for the Event</Title>
+        <UploadImages
+          {...register('images')}
+          name='images'
+          uploadedImages={onImageUpload}
+          errors={errors.images}
         />
-        <CustomInput
-          type='text'
-          label='Enter Event description'
-          name='descriptionText'
-          onChange={formik.handleChange("descriptionText")}
-          onBlur={formik.handleBlur("descriptionText")}
-          value={formik.values.descriptionText}
-          formikTouched={formik.touched.descriptionText}
-          formikErrors={formik.errors.descriptionText}
-        />
-        <div className='mb-2'>Enter Event location</div>
-        <Map setSelectedAddress={setSelectedAddress} />
-        <CustomInput
-          type='number'
-          label='Enter Event price for adults'
-          name='adultPrice'
-          onChange={formik.handleChange("adultPrice")}
-          onBlur={formik.handleBlur("adultPrice")}
-          value={formik.values.adultPrice.toString()}
-          formikTouched={formik.touched.adultPrice}
-          formikErrors={formik.errors.adultPrice}
-        />
-        <CustomInput
-          type='number'
-          label='Enter Event price for children'
-          name='childPrice'
-          onChange={formik.handleChange("childPrice")}
-          onBlur={formik.handleBlur("childPrice")}
-          value={formik.values.childPrice.toString()}
-          formikTouched={formik.touched.childPrice}
-          formikErrors={formik.errors.childPrice}
-        />
-        <CustomInput
-          type='number'
-          label='Enter quantity tickets for adults '
-          name='adultQuantityTickets'
-          onChange={formik.handleChange("adultQuantityTickets")}
-          onBlur={formik.handleBlur("adultQuantityTickets")}
-          value={formik.values.adultQuantityTickets.toString()}
-          formikTouched={formik.touched.adultQuantityTickets}
-          formikErrors={formik.errors.adultQuantityTickets}
-        />
-        <CustomInput
-          type='number'
-          label='Enter quantity tickets for children '
-          name='childrenQuantityTickets'
-          onChange={formik.handleChange("childrenQuantityTickets")}
-          onBlur={formik.handleBlur("childrenQuantityTickets")}
-          value={formik.values.childrenQuantityTickets.toString()}
-          formikTouched={formik.touched.childrenQuantityTickets}
-          formikErrors={formik.errors.childrenQuantityTickets}
-        />
-        <Select
-          mode="multiple"
-          label='Select Event time'
-          optionItems={timePicker}
-          defaultValue={selectedTime}
-          onChange={(e: string[]) => handleTime(e)}
-          valueSelect={formik.values.time?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.time}
-          formikTouched={formik.touched.time}
-          name='time'
-        />
-        <>
-          <div>Select date event</div>
-          <Calendar locale={enUS.code} onChange={setValueCalendar} value={valueCalendar} />
-          <pre>{JSON.stringify(formattedValueCalendar, null, 2)}</pre>
-        </>
-        <Button
-          className="btn btn-success border-0 rounded-3 my-5"
-          type="submit"
-        >
-          {eventId !== undefined ? "Edit" : "Add"} Event
-        </Button>
-
-      </form>
+        <FormItem name='title' control={control} label='Enter title' help>
+          <Input size="large" />
+        </FormItem>
+        {/* List of Image tickets */}
+        <div className='relative'>
+          <Controller
+            control={control}
+            name="descriptionText"
+            render={({ field }) => (
+              <div>
+                <h2 className='text font-normal text-sm'>Add a description about the event</h2>
+                <ReactQuill
+                  theme="snow"
+                  className={cn(`my-4 border-[1.5px] rounded-md`, errors.descriptionText ? 'border-[#ef090d]' : ' border-transparent')}
+                  {...field}
+                  onChange={(text) => {
+                    field.onChange(text);
+                  }}
+                />
+              </div>
+            )}
+          />
+          {errors.descriptionText && <p className='absolute -bottom-[35px] left-[8px] text-[#ef090d]'>{errors.descriptionText.message}</p>}
+        </div>
+        <FormItem name='adultPrice' control={control} label='Enter adult price' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='childPrice' control={control} label='Enter child price' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='adultQuantityTickets' control={control} label='Enter adult quantity tickets' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='childrenQuantityTickets' control={control} label='Enter children quantity tickets' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='time' control={control} label='Select event time' help>
+          <Select size="large" mode="multiple" options={timePicker} />
+        </FormItem>
+        <Map name='address' setSelectedAddress={(data: string) => setValue('address', data)} error={errors.address} />
+        <div className='flex flex-col justify-start items-start'>
+          <Title level={5}>Select a date for event</Title>
+          <Calendar locale={enUS.code} onChange={onDateSelect} value={valueCalendar} />
+        </div>
+        <Form.Item>
+          <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

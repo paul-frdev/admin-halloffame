@@ -11,9 +11,18 @@ const deleteImage = async (id: string | undefined) => {
   return response.data;
 };
 
+const updateImage = async (data: any) => {
+  
+  console.log('data', data);
+  const response = await axios.post(`${base_url}image/text`, data, config);
+
+  return response.data;
+};
+
 const uploadService = {
   uploadImage,
   deleteImage,
+  updateImage,
 };
 
 export default uploadService;

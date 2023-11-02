@@ -6,17 +6,13 @@ import "react-quill/dist/quill.snow.css";
 
 interface QuillEditorProps {
   theme: string;
-  name?: string;
   onChange: (e: any) => void;
   value: string;
-  formikTouched?: any;
-  formikErrors?: any;
 }
-export const QuillEditor: React.FC<QuillEditorProps> = ({ theme, name, onChange, value, formikTouched, formikErrors }) => {
+export const QuillEditor: React.FC<QuillEditorProps> = ({ theme , onChange, value, }) => {
   return (
-    <div className='relative'>
+    <div className='relative w-full'>
       <ReactQuill theme={theme} onChange={(e) =>onChange(e)} value={value} />
-      <span className='absolute -bottom-[18px] left-[8px] text-[#ef090d]'>{formikTouched && formikErrors}</span>
     </div>
   )
 }

@@ -10,14 +10,18 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
+import { cn } from '../../lib/utils';
+import { FieldError } from 'react-hook-form';
 
 
 type PlacesProps = {
   setOffice: (position: google.maps.LatLngLiteral) => void;
   setSelectedAddress: (e: string) => void;
+  name?: string;
+  error?: FieldError;
 };
 
-export const Places = ({ setOffice, setSelectedAddress }: PlacesProps) => {
+export const Places = ({ setOffice, setSelectedAddress, name, error }: PlacesProps) => {
   const {
     ready,
     value,
@@ -26,7 +30,7 @@ export const Places = ({ setOffice, setSelectedAddress }: PlacesProps) => {
     clearSuggestions,
   } = usePlacesAutocomplete();
 
-  const handleSelect = async (val: string) => {    
+  const handleSelect = async (val: string) => {
     setValue(val, false);
     setSelectedAddress(val)
     clearSuggestions();
@@ -39,11 +43,12 @@ export const Places = ({ setOffice, setSelectedAddress }: PlacesProps) => {
   return (
     <Combobox onSelect={handleSelect}>
       <ComboboxInput
+        name={name}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         disabled={!ready}
-        className="w-full p-2 outline-none rounded-md shadow-lg"
-        placeholder="Search location"
+        className={cn(`w-full p-2 outline-none rounded-md shadow-lg border-[1.5px]`, error ? 'border-[#ef090d] placeholder:text-[#ef090d]' : 'border-transparent')}
+        placeholder={cn(``, error ? 'Address field is required' : 'Search location')}
       />
       <ComboboxPopover>
         <ComboboxList>

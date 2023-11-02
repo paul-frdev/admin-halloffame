@@ -4,7 +4,7 @@ import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { CustomInput } from '../ui/CustomInput';
-import { QuillEditor } from '../ui/QuillEditor';
+import { QuillEditor } from '../common/QuillEditor';
 import { Select } from '../ui/Select';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import { getBrands } from '../../store/brandSlice';
@@ -18,7 +18,7 @@ import { ImageUrls } from '../../types/store';
 import { Checkbox } from 'antd';
 import { cn } from '../../lib/utils';
 import { createProduct } from '../../store/productSlice';
-import { UploadImages } from '../ui/UploadImages';
+import { UploadImages } from '../common/UploadImages';
 
 
 let schema = yup.object().shape({
@@ -221,8 +221,6 @@ export const ProductForm = () => {
           theme='snow'
           onChange={formik.handleChange("description")}
           value={formik.values.description}
-          formikErrors={formik.errors.description}
-          formikTouched={formik.touched.description}
         />
         <CustomInput
           type="number"

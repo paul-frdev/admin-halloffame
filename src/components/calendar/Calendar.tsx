@@ -13,11 +13,12 @@ type TProps = {
   minDate?: Date;
   onChange?: (date: Date) => void;
   value?: TCalendarValue;
+  disabled?: boolean;
 } & CalendarProps;
 
 const CalendarComponent: React.FC<TProps> = (props) => {
 
-  const { locale, maxDate, minDate, onChange, value } = props;
+  const { locale, maxDate, minDate, onChange, value, disabled } = props;
 
   const [activeDate, setActiveDate] = useState<Date | undefined>(new Date());
 

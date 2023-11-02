@@ -24,6 +24,7 @@ export const deleteImg = createAsyncThunk<string, string | undefined, { rejectVa
 
 const initialState: ImageProps = {
   images: [],
+  updatedImage: [],
   isError: false,
   isLoading: false,
   isSuccess: false,
