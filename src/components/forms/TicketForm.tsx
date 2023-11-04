@@ -1,66 +1,92 @@
-import { useFormik } from "formik";
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
-import { Button } from '../ui/Button';
 import { toast } from 'react-toastify';
-import { UploadImages } from '../common/UploadImages';
-import { uploadImg } from '../../store/uploadImageSlice';
-import { CustomInput } from '../ui/CustomInput';
+import { ImagesProps, UploadImages } from '../common/UploadImages';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Title } from '../ui/Title';
+import { Button, Form, Input } from 'antd';
+import { FormItem } from '../ui/FormItem';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useLocation } from 'react-router-dom';
+import * as yup from "yup";
+import { createTicket } from '../../store/ticketSlice';
+import { resetStateImages } from '../../store/uploadImageSlice';
 
 
+const validationSchema = yup.object().shape({
+  title: yup.string().required('Field title is required'),
+  images: yup.array().of(
+    yup.object().shape({
+      public_id: yup.string().required('Public ID is required'),
+      url: yup.string().required('Image URL is required'),
+    })
+  ).test('at-least-one-image', 'At least one image is required', function (value) {
+    if (!value || value.length === 0) {
+      return false;
+    }
+    return true;
+  }).required('At least one image is required')
+});
 
 export const TicketForm = () => {
 
   const dispatch = useAppDispatch()
-  const imagesState = useAppSelector((state: RootState) => state.uploadImages.images)
 
-  const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
+  const location = useLocation()
+  const { tickets } = useAppSelector((state: RootState) => state.tickets)
+  const { isLoading, isError, isSuccess, images } = useAppSelector((state: RootState) => state.uploadImages)
 
-
-  imagesState.forEach((i) => {
-    imagesCloudinary.push({
-      public_id: i.public_id,
-      url: i.url,
-    });
-  });
-
-  const formik = useFormik({
-    enableReinitialize: true,
-    initialValues: {
+  const { control, handleSubmit, formState: { errors }, setValue, getValues, register, reset } = useForm({
+    defaultValues: {
       title: '',
-      image: imagesCloudinary
+      images: []
     },
-
-    onSubmit: async (values) => {
-      dispatch(uploadImg(values))
-    },
+    resolver: yupResolver(validationSchema),
   });
 
+  console.log('images', images, getValues());
 
+
+  const ticketImageId = location.pathname.split("/")[3];
+
+  const onSubmit: SubmitHandler<any> = (data) => {
+    try {
+      dispatch(createTicket(data))
+      dispatch(resetStateImages())
+      reset();
+      toast.success('Ticket images added successfully')
+    } catch (error) {
+      toast.error(`Something went wrong, ${error}`)
+    }
+  }
+
+  const onImageUpload = (uploadedImages: ImagesProps[]) => {
+
+    const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
+    setValue('images', simplifiedImagesUrls, { shouldValidate: true });
+
+    return simplifiedImagesUrls
+  }
 
   return (
     <div>
-      <h3 className="mb-4  title">
-        add event ticket
-      </h3>
-      <form action="" onSubmit={formik.handleSubmit}>
-        <UploadImages />
-        <CustomInput
-          type='text'
-          label='Enter Event title'
-          name='title'
-          onChange={formik.handleChange("title")}
-          onBlur={formik.handleBlur("title")}
-          value={formik.values.title}
-          formikTouched={formik.touched.title}
-          formikErrors={formik.errors.title}
+      <Title level={3}>{ticketImageId !== undefined ? "Edit" : "Add"} Ticket Image</Title>
+      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}
+      >
+        <UploadImages
+          register={register('images')}
+          name='images'
+          uploadedImages={onImageUpload}
+          errors={errors.images}
         />
-        <Button
-          className="btn btn-success border-0 rounded-3 my-5"
-          type="submit"
-        >
-          Create event ticket
-        </Button>
-      </form>
+        <FormItem name='title' control={control} label='Enter title' help>
+          <Input size="large" />
+        </FormItem>
+        <Form.Item>
+          <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

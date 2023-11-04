@@ -63,8 +63,6 @@ export const ProductList = () => {
   for (let i = 0; i < productState?.length!; i++) {
     const productArray: any = productState?.[i];
 
-    console.log('productArray', productArray);
-
     product.push({
       key: i + 1,
       title: productArray.product_title,

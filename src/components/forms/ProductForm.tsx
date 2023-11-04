@@ -200,7 +200,6 @@ export const ProductForm = () => {
     setTags(e)
   }
 
-  console.log('formik.values', formik.values);
   return (
     <div>
       <h3 className="mb-4 title">Add Product</h3>

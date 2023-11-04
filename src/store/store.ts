@@ -9,6 +9,8 @@ import weightsReducer from './weightSlice';
 import categorySlice from './categorySlice';
 import brandSlice from './brandSlice';
 import productSlice from './productSlice';
+import eventSlice from './eventSlice';
+import ticketSlice from './ticketSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +23,8 @@ export const store = configureStore({
     categories: categorySlice,
     brands: brandSlice,
     products: productSlice,
+    events: eventSlice,
+    tickets: ticketSlice,
   },
 });
 

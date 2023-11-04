@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import Dropzone from "react-dropzone";
 import { deleteImg, uploadImg } from '../../store/uploadImageSlice';
 import { AiOutlineClose } from 'react-icons/ai';
-import { FieldError, FieldErrors, FieldErrorsImpl, FieldValues, Merge, UseFormRegister } from 'react-hook-form';
+import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 import { cn } from '../../lib/utils';
 import { Text } from '../ui/Text';
+import { toast } from 'react-toastify';
+import { Skeleton } from 'antd';
 
 
 export type ImagesProps = {
@@ -16,18 +18,41 @@ export type ImagesProps = {
 interface UploadImagesProps {
   name?: string;
   uploadedImages?: (img: ImagesProps[]) => void;
-  register?: UseFormRegister<FieldValues>;
+  register?: UseFormRegisterReturn<string>;
   errors?: Merge<FieldError, FieldErrorsImpl<{}>>;
 }
 
 export const UploadImages = ({ name, uploadedImages, register, errors }: UploadImagesProps) => {
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const dispatch = useAppDispatch();
-  const imageState = useAppSelector((state: RootState) => state.uploadImages.images)
+  const { isError, isLoading, isSuccess, images } = useAppSelector((state: RootState) => state.uploadImages)
 
   useEffect(() => {
-    uploadedImages?.(imageState)
-  }, [imageState])
+    uploadedImages?.(images)
+  }, [images])
+  
+
+  const deleteImage = (id: string | undefined) => {
+    try {
+      dispatch(deleteImg(id))
+    } catch (error) {
+      toast.error(`Something went wrong, ${error}`)
+    }
+  }
+
+  const renderSkeletons = (count: number) => {
+    const skeletons = Array.from({ length: count }, (_, index) => (
+      <div key={index} className="w-full">
+        <div className='max-w-[900px] relative w-full'>
+          <Skeleton.Image active />
+        </div>
+      </div>
+    ));
+
+    return skeletons;
+  }
 
   return (
     <div className='flex relative flex-col justify-start items-start w-full'>
@@ -39,31 +64,34 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()} className=' rounded-sm'>
-                <input ref={(el: any) => register?.(el)} name={name} {...getInputProps()} />
+                <input name={name} {...getInputProps()} />
                 <p className='mb-0 p-4 text-lg border-2 border-[#999999] border-dashed rounded-sm cursor-pointer bg-white'>
-                  Drag 'n' drop some files here, or click to select files
+                  Drag 'n' drop some images here, or click to select ones
                 </p>
               </div>
             </section>
           )}
         </Dropzone>
       </div>
-      <div className="showimages flex flex-wrap mt-3 gap-3  w-full">
-        {imageState?.map((image, j) => {
+      <div className="flex flex-wrap my-4 gap-3  w-full">
+        {isLoading ? renderSkeletons(2) : (images?.map((image, j) => {
           return (
-            <div className="relative max-w-[900px]" key={j}>
-              <button
-                type="button"
-                onClick={() => dispatch(deleteImg(image.public_id))}
-                className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
-                style={{ top: "10px", right: "10px" }}
-              >
-                <AiOutlineClose size={24} />
-              </button>
-              <img src={image.url} alt="img" style={{ width: '100%', height: 400 }} />
+            <div className="w-full" key={j}>
+
+              <div className='max-w-[900px] relative w-full'>
+                <button
+                  type="button"
+                  onClick={() => deleteImage(image.public_id)}
+                  className="btn-close absolute top-0 right-0 bg-white rounded-full p-1 hover:text-white hover:bg-black transition-all duration-200"
+                  style={{ top: "10px", right: "10px" }}
+                >
+                  <AiOutlineClose size={24} />
+                </button>
+                <img src={image.url} alt="img" style={{ width: '100%', height: 400 }} />
+              </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   )

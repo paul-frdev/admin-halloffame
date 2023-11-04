@@ -4,14 +4,11 @@ import { format } from "date-fns";
 import { useLocation } from 'react-router-dom'
 import { enUS } from "date-fns/locale";
 import * as yup from "yup";
-import { ImageUrls } from '../../types/store';
-import { ImagesProps, UploadImages } from '../common/UploadImages';
 
 import { Map } from '../map/Map';
 import { Calendar } from '../calendar/Calendar';
 import { TCalendarValue } from '../../types/calendar';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
-import { IOption } from '../../types';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -19,6 +16,9 @@ import { Button, Form, Input, Select } from 'antd';
 import ReactQuill from 'react-quill';
 import { cn } from '../../lib/utils';
 import { Title } from '../ui/Title';
+import { IOption } from '../../types/store';
+import { ImagesProps, UploadImages } from '../common/UploadImages';
+import { getTickets } from '../../store/ticketSlice';
 
 
 const validationSchema = yup.object().shape({
@@ -38,47 +38,26 @@ const validationSchema = yup.object().shape({
       public_id: yup.string().required('Public ID is required'),
       url: yup.string().required('Image URL is required'),
     })
-  ).test('at-least-one-image', 'At least one image is required', function (value) {
+  ).test('at-least-one-image', 'One image is required', function (value) {
     if (!value || value.length === 0) {
-      return false; 
+      return false;
     }
     return true;
   }).required('At least one image is required'),
-  ticketImgs: yup.array().of(
-    yup.object().shape({
-      public_id: yup.string().required('Public ID is required'),
-      url: yup.string().required('Image URL is required'),
-    })
-  ).test('at-least-one-image', 'At least one image is required', function (value) {
-    if (!value || value.length === 0) {
-      return false; 
-    }
-    return true;
-  }).required('At least one image is required'),
+  ticketImgs: yup.string().required('At least one image is required'),
 });
-interface EventFormProps {
-  title: string;
-  descriptionText: string;
-  date?: string;
-  time: IOption[] | null;
-  images: ImageUrls[];
-  ticketImg: ImageUrls[];
-  location: string;
-  adultPrice: number;
-  childPrice: number;
-  adultQuantityTickets: number;
-  childrenQuantityTickets: number;
-}
 
 const timePicker: IOption[] = [{ value: "10:00", label: "10:00" }, { value: "11:00", label: "11:00" }, { value: "12:00", label: "12:00" }, { value: "13:00", label: "13:00" }, { value: "14:00", label: "14:00" }, { value: "15:00", label: "15:00" }, { value: "16:00", label: "16:00" }, { value: "17:00", label: "17:00" }, { value: "18:00", label: "18:00" }, { value: "19:00", label: "19:00" }, { value: "20:00", label: "20:00" }, { value: "21:00", label: "21:00" }]
 
 export const EventForm = () => {
 
   const [valueCalendar, setValueCalendar] = useState<TCalendarValue>(new Date());
+  const [selectedImages, setSelectedImages] = useState<any>('')
 
   const location = useLocation()
 
   const dispatch = useAppDispatch()
+  const { tickets } = useAppSelector((state: RootState) => state.tickets)
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues, register } = useForm({
     defaultValues: {
@@ -96,19 +75,33 @@ export const EventForm = () => {
     resolver: yupResolver(validationSchema),
   });
 
+  useEffect(() => {
+    dispatch(getTickets())
+  }, [])
+
+  const ticketImages: any = [];
+
+
+  tickets.forEach((i) => {
+    ticketImages.push({
+      value: i.ticket_images_id,
+      label: i.title,
+    });
+  });
+
+
+  const eventId = location.pathname.split("/")[3];
+
   const onSubmit: SubmitHandler<any> = (data) => {
     console.log(data)
   }
 
   const onImageUpload = (uploadedImages: ImagesProps[]) => {
-
     const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
     setValue('images', simplifiedImagesUrls, { shouldValidate: true });
 
     return simplifiedImagesUrls
   }
-
-  const eventId = location.pathname.split("/")[3];
 
   const onDateSelect = (selectedDate: TCalendarValue) => {
     setValueCalendar(selectedDate);
@@ -116,31 +109,45 @@ export const EventForm = () => {
     setValue('date', formattedDate);
   }
 
-  console.log('errors', errors);
+  const selectedTitle = (titleId: any) => {
+    const ticketImageUrl = tickets.find((t: any) => t.ticket_images_id === titleId)?.ticket_images.map((item: any) => item.url).join('')
+    setSelectedImages(ticketImageUrl)
+  }
+
+  console.log('getValues', getValues());
+  
 
   return (
     <div>
       <Title level={3}>{eventId !== undefined ? "Edit" : "Add"} Event</Title>
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}
       >
-        <Title className=' lowercase !text-[#ff4d4f]' level={5}>First of all, upload image for the Event</Title>
         <UploadImages
-          {...register('images')}
+          register={register('images')}
           name='images'
           uploadedImages={onImageUpload}
           errors={errors.images}
         />
+        <FormItem name='ticketImgs' control={control} label='Select image for your Event' help>
+          <Select
+            size="large"
+            options={ticketImages}
+            onSelect={selectedTitle}
+          />
+          {selectedImages.length ? <div className='my-4 w-full max-w-[900px] '>
+            <img src={selectedImages} alt='ticketImage' />
+          </div> : null }
+        </FormItem>
         <FormItem name='title' control={control} label='Enter title' help>
           <Input size="large" />
         </FormItem>
-        {/* List of Image tickets */}
         <div className='relative'>
           <Controller
             control={control}
             name="descriptionText"
             render={({ field }) => (
               <div>
-                <h2 className='text font-normal text-sm'>Add a description about the event</h2>
+                <Title level={5}>Add a description about the event</Title>
                 <ReactQuill
                   theme="snow"
                   className={cn(`my-4 border-[1.5px] rounded-md`, errors.descriptionText ? 'border-[#ef090d]' : ' border-transparent')}

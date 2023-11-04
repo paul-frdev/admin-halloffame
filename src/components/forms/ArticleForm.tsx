@@ -90,9 +90,6 @@ export const ArticleForm = () => {
     setCategories(e)
   }
 
-  console.log('formik', formik.values.description.length);
-
-
   return (
     <div>
       <h3 className="mb-4 title">

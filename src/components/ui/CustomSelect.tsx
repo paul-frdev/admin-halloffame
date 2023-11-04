@@ -11,8 +11,6 @@ export type IOption = {
 
 export function CustomSelect (props: any) {
 
-  console.log('props', props.field);
-  
 
   return (
     <>

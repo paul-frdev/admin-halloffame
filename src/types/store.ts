@@ -1,3 +1,9 @@
+export type IOption = {
+  value: any;
+  label: string;
+  icon?: string;
+};
+
 export interface BasicState {
   isError: boolean;
   isLoading: boolean;
@@ -135,4 +141,32 @@ export interface ProductState extends BasicState {
   createdProduct?: ProductData[];
   updatedProduct?: ProductData[];
   deletedProduct?: ProductData[];
+}
+
+export interface EventProps {
+  title: string;
+  descriptionText: string;
+  date?: string;
+  time: IOption[] | null;
+  images: ImageUrls[];
+  ticketImg: ImageUrls[];
+  location: string;
+  adultPrice: number;
+  childPrice: number;
+  adultQuantityTickets: number;
+  childrenQuantityTickets: number;
+}
+
+export interface EventState extends BasicState {
+  eventsData: EventProps[];
+}
+
+export interface TicketProps {
+  title: string;
+  ticket_images: ImageUrls[];
+  ticket_images_id?: string;
+}
+
+export interface TicketState extends BasicState {
+  tickets: TicketProps[];
 }
