@@ -29,6 +29,14 @@ export const createArticle = createAsyncThunk<string[], ArticleProps, { rejectVa
   }
 );
 
+export const deleteArticleById = createAsyncThunk<string[], string, { rejectValue: string }>('brand/delete-article', async (id, thunkAPI) => {
+  try {
+    return await articleService.deleteArticle(id);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 export const resetState = createAction('Reset_all');
 
 const initialState: ArticlesState = {
@@ -85,6 +93,20 @@ const articlesReducer = createSlice({
         state.articles = action.payload;
       })
       .addCase(createArticle.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deleteArticleById.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteArticleById.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(deleteArticleById.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

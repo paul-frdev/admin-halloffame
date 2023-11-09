@@ -38,14 +38,14 @@ const CalendarComponent: React.FC<TProps> = (props) => {
   return (
     <CalendarUI
       {...props}
-      activeStartDate={activeDate} // The beginning of a period that shall be displayed
+      activeStartDate={activeDate} 
       className="calendar"
       locale={locale}
       maxDate={maxDate}
       minDate={minDate}
       onActiveStartDateChange={onActiveStartDateChange}
       onClickDay={handleClickDay}
-      tileClassName="Calendar-DayTile" // Class name(s) that will be applied to a given calendar item (day on month view, month on year view and so on).
+      tileClassName="Calendar-DayTile"
       value={value}
     />
   )

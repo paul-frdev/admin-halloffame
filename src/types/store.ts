@@ -24,6 +24,8 @@ export interface ArticleProps {
   id?: string;
   cat_title?: string;
   created_at?: Date;
+  publish_date: Date;
+  status?: 'draft' | 'published',
   categoryId?: string;
   images?: ImageUrls[];
   article_id?: string;
@@ -145,16 +147,19 @@ export interface ProductState extends BasicState {
 
 export interface EventProps {
   title: string;
-  descriptionText: string;
-  date?: string;
+  descriptiontext: string;
+  event_date?: Date;
+  publish_date?: Date;
+  event_id?: string;
+  status?: 'draft' | 'published',
   time: IOption[] | null;
   images: ImageUrls[];
-  ticketImg: ImageUrls[];
+  ticket_image: string;
   location: string;
-  adultPrice: number;
-  childPrice: number;
-  adultQuantityTickets: number;
-  childrenQuantityTickets: number;
+  adult_price: number;
+  child_price: number;
+  adult_quantity_tickets: number;
+  children_quantity_tickets: number;
 }
 
 export interface EventState extends BasicState {

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'
 
 import { format } from "date-fns";
 import { useLocation } from 'react-router-dom'
-import { enUS } from "date-fns/locale";
+import { uk } from "date-fns/locale";
 import * as yup from "yup";
 
 import { Map } from '../map/Map';
 import { Calendar } from '../calendar/Calendar';
-import { TCalendarValue } from '../../types/calendar';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,13 +18,16 @@ import { Title } from '../ui/Title';
 import { IOption } from '../../types/store';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { getTickets } from '../../store/ticketSlice';
+import { createEvent, resetStateEvent } from '../../store/eventSlice';
+import { toast } from 'react-toastify';
 
 
 const validationSchema = yup.object().shape({
   title: yup.string().required('Required field'),
   descriptionText: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
   address: yup.string().required('Address field is required'),
-  date: yup.string().required('Required field'),
+  date: yup.date().required('Event date is required').typeError('Invalid date format'),
+  publishDate: yup.date().required('Publish date is required').typeError('Invalid date format'),
   adultPrice: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
   childPrice: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
   adultQuantityTickets: yup.number().min(1, 'Adult price must be greater than 0').required('Required field'),
@@ -44,33 +46,35 @@ const validationSchema = yup.object().shape({
     }
     return true;
   }).required('At least one image is required'),
-  ticketImgs: yup.string().required('At least one image is required'),
+  ticketImg: yup.string().required('At least one image is required'),
 });
 
 const timePicker: IOption[] = [{ value: "10:00", label: "10:00" }, { value: "11:00", label: "11:00" }, { value: "12:00", label: "12:00" }, { value: "13:00", label: "13:00" }, { value: "14:00", label: "14:00" }, { value: "15:00", label: "15:00" }, { value: "16:00", label: "16:00" }, { value: "17:00", label: "17:00" }, { value: "18:00", label: "18:00" }, { value: "19:00", label: "19:00" }, { value: "20:00", label: "20:00" }, { value: "21:00", label: "21:00" }]
 
 export const EventForm = () => {
 
-  const [valueCalendar, setValueCalendar] = useState<TCalendarValue>(new Date());
   const [selectedImages, setSelectedImages] = useState<any>('')
 
   const location = useLocation()
 
   const dispatch = useAppDispatch()
   const { tickets } = useAppSelector((state: RootState) => state.tickets)
+  const { eventsData } = useAppSelector((state: RootState) => state.events)
 
-  const { control, handleSubmit, formState: { errors }, setValue, getValues, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, getValues, register, reset } = useForm({
     defaultValues: {
       title: '',
       descriptionText: '',
       address: '',
-      date: '',
+      date: undefined,
+      publishDate: undefined,
       adultPrice: 0,
       childPrice: 0,
       adultQuantityTickets: 0,
       childrenQuantityTickets: 0,
       time: [],
-      images: []
+      images: [],
+      ticketImg: '',
     },
     resolver: yupResolver(validationSchema),
   });
@@ -93,8 +97,20 @@ export const EventForm = () => {
   const eventId = location.pathname.split("/")[3];
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    console.log(data)
+    data.date = format(data.date, 'yyyy-MM-dd', { locale: uk });
+    data.publishDate = format(data.publishDate, 'yyyy-MM-dd', { locale: uk });
+console.log('data', data);
+
+    try {
+      dispatch(createEvent(data))
+      dispatch(resetStateEvent())
+      reset();
+      toast.success('Article added successfully')
+    } catch (error) {
+      toast.error(`Something went wrong, ${error}`)
+    }
   }
+
 
   const onImageUpload = (uploadedImages: ImagesProps[]) => {
     const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
@@ -103,19 +119,11 @@ export const EventForm = () => {
     return simplifiedImagesUrls
   }
 
-  const onDateSelect = (selectedDate: TCalendarValue) => {
-    setValueCalendar(selectedDate);
-    const formattedDate = selectedDate && !Array.isArray(selectedDate) ? format(selectedDate, "dd.MM.yyyy", { locale: enUS }) : "";;
-    setValue('date', formattedDate);
-  }
-
   const selectedTitle = (titleId: any) => {
     const ticketImageUrl = tickets.find((t: any) => t.ticket_images_id === titleId)?.ticket_images.map((item: any) => item.url).join('')
     setSelectedImages(ticketImageUrl)
   }
 
-  console.log('getValues', getValues());
-  
 
   return (
     <div>
@@ -128,7 +136,7 @@ export const EventForm = () => {
           uploadedImages={onImageUpload}
           errors={errors.images}
         />
-        <FormItem name='ticketImgs' control={control} label='Select image for your Event' help>
+        <FormItem name='ticketImg' control={control} label='Select image for your Event' help>
           <Select
             size="large"
             options={ticketImages}
@@ -136,7 +144,7 @@ export const EventForm = () => {
           />
           {selectedImages.length ? <div className='my-4 w-full max-w-[900px] '>
             <img src={selectedImages} alt='ticketImage' />
-          </div> : null }
+          </div> : null}
         </FormItem>
         <FormItem name='title' control={control} label='Enter title' help>
           <Input size="large" />
@@ -177,9 +185,13 @@ export const EventForm = () => {
           <Select size="large" mode="multiple" options={timePicker} />
         </FormItem>
         <Map name='address' setSelectedAddress={(data: string) => setValue('address', data)} error={errors.address} />
-        <div className='flex flex-col justify-start items-start'>
-          <Title level={5}>Select a date for event</Title>
-          <Calendar locale={enUS.code} onChange={onDateSelect} value={valueCalendar} />
+        <div className='flex justify-start items-start gap-x-12'>
+          <FormItem name='date' control={control} label='Select a day of Event' help >
+            <Calendar locale={uk.code} />
+          </FormItem>
+          <FormItem name='publishDate' control={control} label='Select a day, when you want to publish your event on website' help >
+            <Calendar locale={uk.code} />
+          </FormItem>
         </div>
         <Form.Item>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">

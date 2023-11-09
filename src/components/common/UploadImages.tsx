@@ -32,7 +32,7 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
   useEffect(() => {
     uploadedImages?.(images)
   }, [images])
-  
+
 
   const deleteImage = (id: string | undefined) => {
     try {
@@ -42,12 +42,10 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
     }
   }
 
-  const renderSkeletons = (count: number) => {
+  const renderSkeleton = (count: number) => {
     const skeletons = Array.from({ length: count }, (_, index) => (
-      <div key={index} className="w-full">
-        <div className='max-w-[900px] relative w-full'>
-          <Skeleton.Image active />
-        </div>
+      <div key={index} className="w-full max-w-[900px]">
+        <Skeleton.Image active style={{ width: '100%', height: 400 }} />
       </div>
     ));
 
@@ -74,7 +72,7 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
         </Dropzone>
       </div>
       <div className="flex flex-wrap my-4 gap-3  w-full">
-        {isLoading ? renderSkeletons(2) : (images?.map((image, j) => {
+        {isLoading ? renderSkeleton(1) : (images?.map((image, j) => {
           return (
             <div className="w-full" key={j}>
 

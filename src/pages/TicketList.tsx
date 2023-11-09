@@ -62,18 +62,18 @@ export const TicketList = () => {
       title: tickets[i].title,
       images: tickets[i].ticket_images.length,
       action: (
-        <span className='flex justify-start'>
+        <span className='flex justify-center items-center'>
           <Link
             to={`/admin/ticket/${tickets[i].ticket_images_id}`}
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
           >
-            <BiEdit />
+            <BiEdit size={20} />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
             onClick={() => showModal(tickets[i].ticket_images_id!)}
           >
-            <AiFillDelete />
+            <AiFillDelete size={20} />
           </button>
         </span>
       ),

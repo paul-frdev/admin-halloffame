@@ -15,7 +15,14 @@ const getArticle = async (id: string) => {
 };
 
 const createArticle = async (article: ArticleProps) => {
+
   const response = await axios.post(`${base_url}article/`, article, config);
+
+  return response.data;
+};
+
+const deleteArticle= async (id: string) => {
+  const response = await axios.delete(`${base_url}article/${id}`, config);
 
   return response.data;
 };
@@ -24,6 +31,7 @@ const articleService = {
   createArticle,
   getArticles,
   getArticle,
+  deleteArticle
 };
 
 export default articleService;

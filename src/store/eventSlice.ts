@@ -18,15 +18,15 @@ export const getEventById = createAsyncThunk<EventProps[], string, { rejectValue
   }
 });
 
-export const createEvent = createAsyncThunk<string[], EventProps, { rejectValue: string }>('event/create-event', async (blogData, thunkAPI) => {
+export const createEvent = createAsyncThunk<string[], EventProps, { rejectValue: string }>('event/create-event', async (EventData, thunkAPI) => {
   try {
-    return await eventService.createEvent(blogData);
+    return await eventService.createEvent(EventData);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }
 });
 
-export const resetState = createAction('Reset_all');
+export const resetStateEvent = createAction('Reset_all');
 
 const initialState: EventState = {
   eventsData: [],
@@ -87,7 +87,7 @@ const eventsReducer = createSlice({
         state.message = action.error;
       })
 
-      .addCase(resetState, () => initialState);
+      .addCase(resetStateEvent, () => initialState);
   },
 });
 
