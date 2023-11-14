@@ -4,9 +4,10 @@ import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { getProducts } from '../store/productSlice';
+import { deleteProductById, getProducts, resetStateProduct } from '../store/productSlice';
 import { Modal } from '../modals/Modal';
 import { Button } from '../components/ui/Button';
+import { toast } from 'react-toastify';
 
 
 
@@ -49,13 +50,14 @@ const columns = [
 export const ProductList = () => {
 
   const [open, setOpen] = useState(false);
-  const [sizeId, setSizeId] = useState("");
+  const [productId, setProductId] = useState("");
 
   const dispatch = useAppDispatch()
   const productState = useAppSelector((state: RootState) => state.products.products);
 
 
   useEffect(() => {
+    dispatch(resetStateProduct())
     dispatch(getProducts())
   }, [])
 
@@ -63,6 +65,8 @@ export const ProductList = () => {
   for (let i = 0; i < productState?.length!; i++) {
     const productArray: any = productState?.[i];
 
+    console.log('productArray', productArray.product_id);
+    
     product.push({
       key: i + 1,
       title: productArray.product_title,
@@ -75,7 +79,7 @@ export const ProductList = () => {
           <Link to="/" className=" fs-3 mr-4 text-[#ef090d]">
             <BiEdit />
           </Link>
-          <Button className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0" onClick={() => showModal}>
+          <Button className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0" onClick={() => showModal(productArray.product_id)}>
             <AiFillDelete />
           </Button>
         </span>
@@ -85,12 +89,28 @@ export const ProductList = () => {
   }
   const showModal = (e: string) => {
     setOpen(true);
-    setSizeId(e);
+    setProductId(e);
   };
 
   const hideModal = () => {
     setOpen(false);
   };
+
+  const deleteProduct = (e: string) => {
+    try {
+      dispatch(deleteProductById(e));
+      setOpen(false);
+      toast.success('Event deleted successfully')
+      setTimeout(() => {
+        dispatch(getProducts());
+      }, 100);
+    } catch (error) {
+      toast.error(`Something went wrong, ${error}`)
+    }
+  };
+
+  console.log('productId', productId);
+  
 
   return (
     <div>
@@ -100,7 +120,9 @@ export const ProductList = () => {
         <Modal
           hideModal={hideModal}
           open={open}
-          performAction={() => { }}
+          performAction={() => {
+            deleteProduct(productId)
+          }}
           title="Are you sure you want to delete product?"
         />
       </div>

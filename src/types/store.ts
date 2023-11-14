@@ -25,7 +25,7 @@ export interface ArticleProps {
   cat_title?: string;
   created_at?: Date;
   publish_date: Date;
-  status?: 'draft' | 'published',
+  status?: 'draft' | 'published';
   categoryId?: string;
   images?: ImageUrls[];
   article_id?: string;
@@ -58,7 +58,7 @@ export interface ImageProps extends BasicState {
 }
 
 export interface ColorsData {
-  colors_id?: string;
+  color_id?: string;
   color_name?: string;
 }
 
@@ -71,7 +71,7 @@ export interface ColorsState extends BasicState {
 }
 
 export interface SizesData {
-  sizes_id?: string;
+  size_id?: string;
   size_name?: string;
 }
 
@@ -84,7 +84,7 @@ export interface SizesState extends BasicState {
 }
 
 export interface WeightsData {
-  weights_id?: string;
+  weight_id?: string;
   weight_name?: string;
 }
 
@@ -114,6 +114,11 @@ export interface BrandsData {
   brand_name?: string;
 }
 
+export interface TagsProps {
+  tag_id: string;
+  tag_name: string;
+}
+
 export interface BrandsState extends BasicState {
   brands?: BrandsData[];
   brandName?: BrandsData;
@@ -126,12 +131,13 @@ export interface ProductData {
   product_id?: string;
   title?: string;
   description?: string;
+  quantity?: number;
   price: number;
   discount?: number;
   isDiscount: boolean;
-  category: string[];
-  brands: string[];
+  category: string;
   images: ImageUrls[];
+  brands: string[];
   colors?: string[];
   weights?: string[];
   sizes?: string[];
@@ -143,6 +149,7 @@ export interface ProductState extends BasicState {
   createdProduct?: ProductData[];
   updatedProduct?: ProductData[];
   deletedProduct?: ProductData[];
+  tags?: TagsProps[];
 }
 
 export interface EventProps {
@@ -151,7 +158,7 @@ export interface EventProps {
   event_date?: Date;
   publish_date?: Date;
   event_id?: string;
-  status?: 'draft' | 'published',
+  status?: 'draft' | 'published';
   time: IOption[] | null;
   images: ImageUrls[];
   ticket_image: string;

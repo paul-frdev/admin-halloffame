@@ -99,7 +99,6 @@ export const EventForm = () => {
   const onSubmit: SubmitHandler<any> = (data) => {
     data.date = format(data.date, 'yyyy-MM-dd', { locale: uk });
     data.publishDate = format(data.publishDate, 'yyyy-MM-dd', { locale: uk });
-console.log('data', data);
 
     try {
       dispatch(createEvent(data))

@@ -1,11 +1,7 @@
-import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { CustomInput } from '../ui/CustomInput';
-import { QuillEditor } from '../common/QuillEditor';
-import { Select } from '../ui/Select';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import { getBrands } from '../../store/brandSlice';
 import { getCategories } from '../../store/categorySlice';
@@ -13,19 +9,45 @@ import { getColors } from '../../store/colorSlice';
 import { getWeights } from '../../store/weightSlice';
 import { getSizes } from '../../store/sizeSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '../ui/Button';
-import { ImageUrls } from '../../types/store';
-import { Checkbox } from 'antd';
+import { BrandsData, ColorsData, ImageUrls, WeightsData } from '../../types/store';
 import { cn } from '../../lib/utils';
-import { createProduct } from '../../store/productSlice';
-import { UploadImages } from '../common/UploadImages';
+import { ImagesProps, UploadImages } from '../common/UploadImages';
+import { Title } from '../ui/Title';
+
+//react-hook-form 
+import { FormItem } from '../ui/FormItem';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Button, Form, Input, Select, Checkbox } from 'antd';
+import ReactQuill from 'react-quill';
+import { createProduct, getTags, resetStateProduct } from '../../store/productSlice';
 
 
-let schema = yup.object().shape({
-  title: yup.string().required("Title is Required"),
-  description: yup.string().min(5).required("Description is Required"),
-  price: yup.number().required("Price is Required"),
-  quantity: yup.number().required("Quantity is Required"),
+const validationSchema = yup.object().shape({
+  title: yup.string().required('Required field'),
+  description: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
+  price: yup.number().required('price field is required'),
+  isDiscount: yup.boolean(),
+  discount: yup.number().required('discount field is required'),
+  quantity: yup.number().required('quantity field is required'),
+  category: yup.string().required('category field is required'),
+  brands: yup.array(),
+  colors: yup.array(),
+  weights: yup.array(),
+  sizes: yup.array(),
+  tags: yup.array(),
+  images: yup.array().of(
+    yup.object().shape({
+      public_id: yup.string().required('Public ID is required'),
+      url: yup.string().required('Image URL is required'),
+    })
+  ).test('at-least-one-image', 'One image is required', function (value) {
+    if (!value || value.length === 0) {
+      return false;
+    }
+    return true;
+  }).required('At least one image is required'),
+
 });
 
 interface FormikProps {
@@ -34,7 +56,7 @@ interface FormikProps {
   price: number;
   discountPrice: number;
   quantity: number;
-  category: string[];
+  category: string;
   brands: string[];
   colors: string[];
   tags: string[];
@@ -46,32 +68,92 @@ interface FormikProps {
 
 }
 
+type OptionType = {
+  value?: string;
+  label?: string;
+}
+
+
+
 export const ProductForm = () => {
 
-  const [colors, setColors] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [weights, setWeights] = useState<string[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
-  const [categories, setCategories] = useState<string[]>([])
-  const [tags, setTags] = useState<string[]>([])
+
+  const [optionBrands, setOptionBrands] = useState<OptionType[] | undefined>([])
+  const [optionColors, setOptionColors] = useState<OptionType[] | undefined>([])
+  const [optionWeights, setOptionWeights] = useState<OptionType[] | undefined>([])
+  const [optionSizes, setOptionSizes] = useState<OptionType[] | undefined>([])
+  const [optionCategory, setOptionCategory] = useState<OptionType[] | undefined>([])
+  const [optionTags, setOptionTags] = useState<OptionType[] | undefined>([])
 
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const brandState = useAppSelector((state: RootState) => state.brands.brands)
-  const categoryState = useAppSelector((state: RootState) => state.categories.categories)
-  const colorState = useAppSelector((state: RootState) => state.colors.colors)
-  const weightsState = useAppSelector((state: RootState) => state.weights.weights)
-  const sizeState = useAppSelector((state: RootState) => state.sizes.sizes)
-  const imageState = useAppSelector((state: RootState) => state.uploadImages.images)
+  const { brands } = useAppSelector((state: RootState) => state.brands)
+  const { categories } = useAppSelector((state: RootState) => state.categories)
+  const { colors } = useAppSelector((state: RootState) => state.colors)
+  const { weights } = useAppSelector((state: RootState) => state.weights)
+  const { sizes } = useAppSelector((state: RootState) => state.sizes)
+  const { images } = useAppSelector((state: RootState) => state.uploadImages)
 
-  const { isError, isLoading, isSuccess, createdProduct } = useAppSelector((state: RootState) => state.products)
+  const { isError, isLoading, isSuccess, createdProduct, tags } = useAppSelector((state: RootState) => state.products)
+
+  const { control, handleSubmit, formState: { errors }, setValue, getValues, register, reset } = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      category: '',
+      price: 0,
+      isDiscount: false,
+      discount: 0,
+      quantity: 0,
+      images: [],
+      sizes: [],
+      weights: [],
+      colors: [],
+      brands: []
+    },
+    resolver: yupResolver(validationSchema),
+  });
+
+
+  useEffect(() => {
+    const mappedBrands = brands?.map((item) => ({
+      value: item.brand_id,
+      label: item.brand_name
+    }));
+    setOptionBrands(mappedBrands);
+    const mappedColors = colors?.map((item) => ({
+      value: item.color_id,
+      label: item.color_name
+    }));
+    setOptionColors(mappedColors);
+    const mappedWeights = weights?.map((item) => ({
+      value: item.weight_id,
+      label: item.weight_name
+    }));
+    setOptionWeights(mappedWeights);
+    const mappedSizes = sizes?.map((item) => ({
+      value: item.size_id,
+      label: item.size_name
+    }));
+    setOptionSizes(mappedSizes);
+    const mappedCategories = categories?.map((item) => ({
+      value: item.category_id,
+      label: item.category_name
+    }));
+    setOptionCategory(mappedCategories);
+    const mappedTags = tags?.map((item) => ({
+      value: item.tag_id,
+      label: item.tag_name
+    }));
+    setOptionTags(mappedTags);
+  }, [brands, colors, weights, sizes, categories, tags]);
 
   const productId = location.pathname.split("/")[3];
-  const tagState = [{ id: 1, name: 'Populated' }, { id: 2, name: "Featured" }, { id: 3, name: "Special" }] as { id: number, name: string }[]
+
   const productImages: ImageUrls[] = [];
-  imageState.forEach((i) => {
+  images.forEach((i) => {
     productImages.push({
       public_id: i.public_id,
       url: i.url,
@@ -84,6 +166,7 @@ export const ProductForm = () => {
     dispatch(getColors());
     dispatch(getWeights())
     dispatch(getSizes())
+    dispatch(getTags())
   }, []);
 
   useEffect(() => {
@@ -95,251 +178,93 @@ export const ProductForm = () => {
     }
   }, [isSuccess, isError, isLoading]);
 
-  useEffect(() => {
-    formik.values.colors = colors && colors.length > 0 ? colors : []
-    formik.values.sizes = sizes && sizes.length > 0 ? sizes : []
-    formik.values.brands = brands && brands.length > 0 ? brands : []
-    formik.values.category = categories && categories.length !== 0 ? categories : []
-    formik.values.weights = weights && weights.length > 0 ? weights : []
-    formik.values.tags = tags && tags.length > 0 ? tags : []
-    formik.values.images = productImages && productImages.length > 0 ? productImages : [];
-  }, [brands, categories, colors, sizes, tags, weights]);
+  const onImageUpload = (uploadedImages: ImagesProps[]) => {
+    const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
+    setValue('images', simplifiedImagesUrls, { shouldValidate: true });
 
-  const colorOptions: any = [];
-  colorState?.forEach((i) => {
-    colorOptions.push({
-      label: i.color_name,
-      value: i.colors_id,
-    });
-  });
-
-  const sizesOptions: any = [];
-  sizeState?.forEach((i) => {
-    sizesOptions.push({
-      label: i.size_name,
-      value: i.sizes_id,
-    });
-  });
-
-  const weightsOptions: any = [];
-  weightsState?.forEach((i) => {
-    weightsOptions.push({
-      label: i.weight_name,
-      value: i.weights_id,
-    });
-  });
-
-  const brandsOptions: any = [];
-  brandState?.forEach((i) => {
-    brandsOptions.push({
-      label: i.brand_name,
-      value: i.brand_id,
-    });
-  });
-
-  const categoryOptions: any = [];
-  categoryState?.forEach((i) => {
-    categoryOptions.push({
-      label: i.category_name,
-      value: i.category_id,
-    });
-  });
-
-  const tagOptions: any = [];
-  tagState.forEach((i) => {
-    tagOptions.push({
-      label: i.name,
-      value: i.name,
-    });
-  });
-
-  const formik = useFormik<FormikProps>({
-    initialValues: {
-      title: "",
-      description: "",
-      price: 0,
-      quantity: 0,
-      discountPrice: 0,
-      isDiscount: false,
-      category: [],
-      brands: [],
-      tags: [],
-      colors: [],
-      sizes: [],
-      weights: [],
-      images: [],
-    },
-    validationSchema: schema,
-    onSubmit: (values) => {
-      console.log('values', values);
-      dispatch(createProduct(values))
-    },
-  });
-
-  const handleColor = (e: string[]) => {
-    setColors(e)
+    return simplifiedImagesUrls
   }
 
-  const handleSize = (e: string[]) => {
-    setSizes(e);
+  const onSubmit: SubmitHandler<any> = (data) => {
+    try {
+      dispatch(createProduct(data))
+      reset();
+      toast.success('Product added successfully')
+    } catch (error) {
+      toast.error(`Something went wrong, ${error}`)
+    }
   }
 
-  const handleWeight = (e: string[]) => {
-    setWeights(e)
-  }
-
-  const handleBrand = (e: string[]) => {
-    setBrands(e)
-  }
-
-  const handleCategory = (e: string[]) => {
-    setCategories(e)
-  }
-
-  const handleTag = (e: string[]) => {
-    setTags(e)
-  }
-
+  console.log('getValues', getValues(), 'colors', colors);
   return (
     <div>
-      <h3 className="mb-4 title">Add Product</h3>
-      <form action="" onSubmit={formik.handleSubmit} className='flex flex-col gap-3 relative'>
-        {productImages.length === 0 && <span className='absolute -top-[33px] text-[16px] text-[#ff0000] right-0'>First of all, download images then add other properties that required below!!!</span>}
-        <UploadImages />
-        <CustomInput
-          type='text'
-          label='Enter Product title'
-          name='title'
-          onChange={formik.handleChange("title")}
-          onBlur={formik.handleBlur("title")}
-          value={formik.values.title}
-          formikTouched={formik.touched.title}
-          formikErrors={formik.errors.title}
+      <Title level={4} className="mb-4">Add Product</Title>
+      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+        <UploadImages
+          register={register('images')}
+          name='images'
+          uploadedImages={onImageUpload}
+          errors={errors.images}
         />
-        <QuillEditor
-          theme='snow'
-          onChange={formik.handleChange("description")}
-          value={formik.values.description}
-        />
-        <CustomInput
-          type="number"
-          label="Enter Product Price"
-          name="price"
-          onChange={formik.handleChange("price")}
-          onBlur={formik.handleBlur("price")}
-          value={formik.values.price.toString()}
-          formikTouched={formik.touched.price}
-          formikErrors={formik.errors.price}
-        />
-        <CustomInput
-          type="number"
-          label="Enter quantity"
-          name="quantity"
-          onChange={formik.handleChange("quantity")}
-          onBlur={formik.handleBlur("quantity")}
-          value={formik.values.quantity.toString()}
-          formikTouched={formik.touched.quantity}
-          formikErrors={formik.errors.quantity}
-        />
-        <div>
-          <Checkbox
-            name="isDiscount"
-            onChange={(e) => formik.setFieldValue('isDiscount', e.target.checked)}
-            className=' uppercase'
-          >
-            Is Discount
-          </Checkbox>
-          <CustomInput
-            type="number"
-            label="Enter discount price"
-            name="discountPrice"
-            className={cn(`mt-2`, !formik.values.isDiscount && 'pointer-events-none opacity-50')}
-            onChange={formik.handleChange("discountPrice")}
-            onBlur={formik.handleBlur("discountPrice")}
-            value={formik.values.discountPrice.toString()}
-            formikTouched={formik.touched.discountPrice}
-            formikErrors={formik.errors.discountPrice}
+        <FormItem name='title' control={control} label='Enter title' help>
+          <Input size="large" />
+        </FormItem>
+        <FormItem name='category' control={control} label='Select product category' help>
+          <Select size="large" options={optionCategory} />
+        </FormItem>
+        <div className='relative'>
+          <Controller
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <div>
+                <Title level={5}>Add a description about the event</Title>
+                <ReactQuill
+                  theme="snow"
+                  className={cn(`my-4 border-[1.5px] rounded-md`, errors.description ? 'border-[#ef090d]' : ' border-transparent')}
+                  {...field}
+                  onChange={(text) => {
+                    field.onChange(text);
+                  }}
+                />
+              </div>
+            )}
           />
+          {errors.description && <p className='absolute -bottom-[35px] left-[8px] text-[#ef090d]'>{errors.description.message}</p>}
         </div>
-
-        <Select
-          name='sizes'
-          mode="multiple"
-          optionItems={sizesOptions}
-          defaultValue={sizes}
-          onChange={(e: string[]) => handleSize(e)}
-          valueSelect={formik.values.sizes?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.sizes}
-          formikTouched={formik.touched.sizes}
-          label='Select Size'
-        />
-        <Select
-          name='colors'
-          mode="multiple"
-          optionItems={colorOptions}
-          defaultValue={colors}
-          onChange={(e: string[]) => handleColor(e)}
-          valueSelect={formik.values.colors[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.colors}
-          formikTouched={formik.touched.colors}
-          label='Select Color'
-        />
-        <Select
-          name='weights'
-          mode="multiple"
-          optionItems={weightsOptions}
-          defaultValue={weights}
-          onChange={(e: string[]) => handleWeight(e)}
-          valueSelect={formik.values.weights?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.weights}
-          formikTouched={formik.touched.weights}
-          label='Select Weights'
-        />
-        <Select
-          name='brands'
-          mode="multiple"
-          optionItems={brandsOptions}
-          defaultValue={weights}
-          onChange={(e: string[]) => handleBrand(e)}
-          valueSelect={formik.values.brands?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.brands}
-          formikTouched={formik.touched.brands}
-          label='Select Brands'
-        />
-        <Select
-          name='tags'
-          optionItems={tagOptions}
-          defaultValue={tags}
-          onChange={(e: string[]) => handleTag(e)}
-          valueSelect={formik.values.tags?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.tags}
-          formikTouched={formik.touched.tags}
-          label='Select Tag'
-        />
-        <Select
-          name='category'
-          optionItems={categoryOptions}
-          defaultValue={categories}
-          onChange={(e: string[]) => handleCategory(e)}
-          valueSelect={formik.values.category?.[0]}
-          className=' min-w-[100px] max-w-[450px] py-3 mb-3'
-          formikErrors={formik.errors.category}
-          formikTouched={formik.touched.category}
-          label='Select Category'
-        />
-        <Button
-          className="btn btn-success border-0 rounded-3 my-5"
-          type="submit"
-          disabled={isLoading}
-        >
-          {productId !== undefined ? "Edit" : "Add"} Product
-        </Button>
-      </form>
+        <FormItem name='price' control={control} label='Enter price' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='quantity' control={control} label='Enter how many quantity of products do you have in stock' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='isDiscount' control={control} label='press button if you want to add discount' help>
+          <Checkbox name='isDiscount' />
+        </FormItem>
+        <FormItem name='discount' control={control} label='Enter discount' help>
+          <Input type='number' size="large" />
+        </FormItem>
+        <FormItem name='brands' control={control} label='Select Brand' help>
+          <Select size="large" mode="multiple" options={optionBrands} />
+        </FormItem>
+        <FormItem name='colors' control={control} label='Select Colors' help>
+          <Select size="large" mode="multiple" options={optionColors} />
+        </FormItem>
+        <FormItem name='weights' control={control} label='Select Weights' help>
+          <Select size="large" mode="multiple" options={optionWeights} />
+        </FormItem>
+        <FormItem name='sizes' control={control} label='Select Sizes' help>
+          <Select size="large" mode="multiple" options={optionSizes} />
+        </FormItem>
+        <FormItem name='tags' control={control} label='Select Tags' help>
+          <Select size="large" mode="multiple" options={optionTags} />
+        </FormItem>
+        <Form.Item>
+          <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   )
 }

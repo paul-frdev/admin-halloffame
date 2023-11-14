@@ -104,7 +104,7 @@ export const EventList = () => {
         title: eventsData[i].title,
         date: formattedDate,
         publishDate: formattedPublishDate,
-        text: content.length > 100 ? content.slice(0, 50) + '...' : content,
+        text: content.length > 100 ? content.slice(0, 100) + '...' : content,
         image: eventsData[i].images.length ? 'YES' : 'NO',
         address: eventsData[i].location,
         adult_quantity_tickets: eventsData[i].adult_quantity_tickets,
@@ -159,7 +159,7 @@ export const EventList = () => {
     <div>
       <Title level={3}>List of events</Title>
       <div>
-        <Table columns={columns} dataSource={data} />
+        <Table style={{whiteSpace: 'pre-wrap'}} columns={columns} dataSource={data} />
       </div>
       <Modal
         hideModal={hideModal}

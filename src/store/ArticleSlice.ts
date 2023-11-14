@@ -37,7 +37,7 @@ export const deleteArticleById = createAsyncThunk<string[], string, { rejectValu
   }
 });
 
-export const resetState = createAction('Reset_all');
+export const resetStateArticle = createAction('Reset_all');
 
 const initialState: ArticlesState = {
   articles: [],
@@ -113,7 +113,7 @@ const articlesReducer = createSlice({
         state.message = action.error;
       })
 
-      .addCase(resetState, () => initialState);
+      .addCase(resetStateArticle, () => initialState);
   },
 });
 

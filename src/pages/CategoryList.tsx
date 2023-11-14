@@ -28,7 +28,7 @@ const columns = [
 
 export const CategoryList = () => {
   const [open, setOpen] = useState(false);
-  const [colorId, setColorId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
 
   const dispatch = useAppDispatch()
   const categoriesState = useAppSelector((state: RootState) => state.categories.categories)
@@ -69,7 +69,7 @@ export const CategoryList = () => {
 
   const showModal = (e: string) => {
     setOpen(true);
-    setColorId(e);
+    setCategoryId(e);
   };
 
   const hideModal = () => {
@@ -77,7 +77,7 @@ export const CategoryList = () => {
   };
 
 
-  const deleteColor = (e: string) => {
+  const deleteCategory = (e: string) => {
     dispatch(deleteCategoryById(e));
     setOpen(false);
     if (isSuccess) {
@@ -98,7 +98,7 @@ export const CategoryList = () => {
         <Modal
           hideModal={hideModal}
           open={open}
-          performAction={() => { deleteColor(colorId) }}
+          performAction={() => { deleteCategory(categoryId) }}
           title="Are you sure you want to delete category?"
         />
       </div>

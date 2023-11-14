@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { CustomInput } from '../ui/CustomInput';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
-import { createNewBlogCategory, resetState } from '../../store/blogCategorySlice';
+import { createNewBlogCategory, resetStateBlogCategory } from '../../store/blogCategorySlice';
 import { Button } from '../ui/Button';
 
 const schema = yup.object().shape({
@@ -21,7 +21,7 @@ export const BlogCategoryForm = () => {
 
   
   useEffect(() => {
-    dispatch(resetState());
+    dispatch(resetStateBlogCategory());
   }, [])
   
   const formik = useFormik({
@@ -35,7 +35,7 @@ export const BlogCategoryForm = () => {
       dispatch(createNewBlogCategory(data));
       formik.resetForm();
       setTimeout(() => {
-        dispatch(resetState())
+        dispatch(resetStateBlogCategory())
       }, 300);
     },
   });

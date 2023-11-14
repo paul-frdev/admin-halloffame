@@ -5,7 +5,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from '../modals/Modal';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { resetState } from '../store/articleSlice';
+import { resetStateArticle } from '../store/articleSlice';
 import { deleteTicketById, getTickets } from '../store/ticketSlice';
 import { TicketProps } from '../types/store';
 import { deleteImg } from '../store/uploadImageSlice';
@@ -42,7 +42,7 @@ export const TicketList = () => {
   const { tickets, isLoading } = useAppSelector((state: RootState) => state.tickets);
 
   useEffect(() => {
-    dispatch(resetState());
+    dispatch(resetStateArticle());
     dispatch(getTickets());
   }, [dispatch]);
 

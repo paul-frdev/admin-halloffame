@@ -15,7 +15,7 @@ const createSize = async (size: SizesData) => {
 
 const updateSize = async (size: SizesData) => {
 
-  const response = await axios.put(`${base_url}size/${size.sizes_id}`, { size_name: size.size_name }, config);
+  const response = await axios.put(`${base_url}size/${size.size_id}`, { size_name: size.size_name }, config);
 
   return response.data;
 };

@@ -14,7 +14,7 @@ const createWeight = async (weight: WeightsData) => {
 };
 
 const updateWeight = async (weight: WeightsData) => {
-  const response = await axios.put(`${base_url}weight/${weight.weights_id}`, { weight_name: weight.weight_name }, config);
+  const response = await axios.put(`${base_url}weight/${weight.weight_id}`, { weight_name: weight.weight_name }, config);
 
   return response.data;
 };

@@ -3,9 +3,10 @@ import { Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { getCategories, resetState } from '../store/blogCategorySlice';
+import { deleteBlogCategoryById, getCategories, resetStateBlogCategory } from '../store/blogCategorySlice';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
+import { toast } from 'react-toastify';
 
 
 const columns = [
@@ -30,12 +31,17 @@ export const BlogCategoryList = () => {
   const [blogCatId, setBlogCatId] = useState("");
 
   const dispatch = useAppDispatch()
-  const blogCatState = useAppSelector((state: RootState) => state.blogCategory.bCategories)
-  
+  const { bCategories, isSuccess } = useAppSelector((state: RootState) => state.blogCategory)
+
+  useEffect(() => {
+    dispatch(resetStateBlogCategory());
+    dispatch(getCategories())
+  }, [])
+
   const data = [];
 
-  for (let i = 0; i < blogCatState.length; i++) {
-    const categoryArray: any = blogCatState[i];
+  for (let i = 0; i < bCategories.length; i++) {
+    const categoryArray: any = bCategories[i];
     data.push({
       key: i + 1,
       name: categoryArray.title,
@@ -67,12 +73,18 @@ export const BlogCategoryList = () => {
     setOpen(false);
   };
 
-
-
-  useEffect(() => {
-    dispatch(resetState());
-    dispatch(getCategories())
-  }, [])
+  const deleteBlogCategory = (e: string) => {
+    dispatch(deleteBlogCategoryById(e));
+    setOpen(false);
+    if (isSuccess) {
+      toast.success('Category deleted successfully')
+      setTimeout(() => {
+        dispatch(getCategories());
+      }, 100);
+    } else {
+      toast.error('Something went wrong')
+    }
+  };
 
   return (
     <div>
@@ -82,6 +94,7 @@ export const BlogCategoryList = () => {
         <Modal
           hideModal={hideModal}
           open={open}
+          performAction={() => { deleteBlogCategory(blogCatId) }}
           title="Are you sure you want to delete this blog category?"
         />
       </div>

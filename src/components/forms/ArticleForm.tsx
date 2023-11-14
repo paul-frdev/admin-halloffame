@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import * as yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
-import { getCategories, resetState } from '../../store/blogCategorySlice';
-import { createArticle, getArticleById } from '../../store/articleSlice';
+import { getCategories } from '../../store/blogCategorySlice';
+import { createArticle, getArticleById, resetStateArticle } from '../../store/articleSlice';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -74,23 +74,21 @@ export const ArticleForm = () => {
     if (articleId !== undefined) {
       dispatch(getArticleById(articleId))
     } else {
-      dispatch(resetState())
+      dispatch(resetStateArticle())
     }
   }, [articleId]);
 
   useEffect(() => {
-    dispatch(resetState());
+    dispatch(resetStateArticle());
     dispatch(getCategories())
   }, []);
 
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    console.log(data.publishDate);
     data.publishDate = format(data.publishDate, 'yyyy-MM-dd', { locale: uk });
-    console.log(data.publishDate);
     try {
       dispatch(createArticle(data))
-      dispatch(resetState())
+      dispatch(resetStateArticle())
       reset();
       toast.success('Article added successfully')
     } catch (error) {
@@ -146,7 +144,7 @@ export const ArticleForm = () => {
           />
           {errors.description && <p className='absolute -bottom-[35px] left-[8px] text-[#ef090d]'>{errors.description.message}</p>}
         </div>
-        <FormItem name="categoryId" control={control} label='Select category for the article' help>
+        <FormItem name="categoryId" control={control} label='Select category for article' help>
           <Select size="large" options={categoryOptions} />
         </FormItem>
         <FormItem name='publishDate' control={control} help label="Select date when to publish the article">
