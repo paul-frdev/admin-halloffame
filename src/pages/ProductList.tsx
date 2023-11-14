@@ -65,8 +65,6 @@ export const ProductList = () => {
   for (let i = 0; i < productState?.length!; i++) {
     const productArray: any = productState?.[i];
 
-    console.log('productArray', productArray.product_id);
-    
     product.push({
       key: i + 1,
       title: productArray.product_title,
@@ -108,9 +106,6 @@ export const ProductList = () => {
       toast.error(`Something went wrong, ${error}`)
     }
   };
-
-  console.log('productId', productId);
-  
 
   return (
     <div>

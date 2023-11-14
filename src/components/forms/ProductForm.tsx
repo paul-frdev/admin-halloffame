@@ -9,7 +9,7 @@ import { getColors } from '../../store/colorSlice';
 import { getWeights } from '../../store/weightSlice';
 import { getSizes } from '../../store/sizeSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BrandsData, ColorsData, ImageUrls, WeightsData } from '../../types/store';
+import { ImageUrls } from '../../types/store';
 import { cn } from '../../lib/utils';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { Title } from '../ui/Title';
@@ -28,7 +28,7 @@ const validationSchema = yup.object().shape({
   description: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
   price: yup.number().required('price field is required'),
   isDiscount: yup.boolean(),
-  discount: yup.number().required('discount field is required'),
+  discount: yup.number(),
   quantity: yup.number().required('quantity field is required'),
   category: yup.string().required('category field is required'),
   brands: yup.array(),
@@ -73,6 +73,42 @@ type OptionType = {
   label?: string;
 }
 
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { header: '3' }, { header: '4' }, { font: [] }],
+    [{ size: [12, 14, 16, 18] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
 
 
 export const ProductForm = () => {
@@ -96,7 +132,7 @@ export const ProductForm = () => {
   const { sizes } = useAppSelector((state: RootState) => state.sizes)
   const { images } = useAppSelector((state: RootState) => state.uploadImages)
 
-  const { isError, isLoading, isSuccess, createdProduct, tags } = useAppSelector((state: RootState) => state.products)
+  const { isError, isLoading, isSuccess, createdProduct, products, tags } = useAppSelector((state: RootState) => state.products)
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues, register, reset } = useForm({
     defaultValues: {
@@ -195,7 +231,6 @@ export const ProductForm = () => {
     }
   }
 
-  console.log('getValues', getValues(), 'colors', colors);
   return (
     <div>
       <Title level={4} className="mb-4">Add Product</Title>
@@ -220,6 +255,8 @@ export const ProductForm = () => {
               <div>
                 <Title level={5}>Add a description about the event</Title>
                 <ReactQuill
+                  modules={modules}
+                  formats={formats}
                   theme="snow"
                   className={cn(`my-4 border-[1.5px] rounded-md`, errors.description ? 'border-[#ef090d]' : ' border-transparent')}
                   {...field}

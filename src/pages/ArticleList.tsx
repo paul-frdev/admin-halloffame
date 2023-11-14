@@ -7,7 +7,6 @@ import { Modal } from '../modals/Modal';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { deleteArticleById, getArticles, resetStateArticle } from '../store/articleSlice';
 import { cn } from '../lib/utils';
-import { ArticleProps } from '../types/store';
 import { toast } from 'react-toastify';
 
 export const ArticleList = () => {

@@ -6,7 +6,7 @@ import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
-import { getBrands, resetState, deleteBrandById, getBrand } from '../store/brandSlice';
+import { getBrands, resetState, deleteBrandById } from '../store/brandSlice';
 
 
 const columns = [
