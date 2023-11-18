@@ -161,7 +161,7 @@ export interface EventProps {
   status?: 'draft' | 'published';
   time: IOption[] | null;
   images: ImageUrls[];
-  ticket_image: string;
+  ticket_img: ImageUrls[];
   location: string;
   adult_price: number;
   child_price: number;
@@ -169,8 +169,16 @@ export interface EventProps {
   children_quantity_tickets: number;
 }
 
+export interface TimeOptions {
+  time_id: string;
+  time_label: string;
+  time_name: string;
+}
+
 export interface EventState extends BasicState {
   eventsData: EventProps[];
+  timeOptions?: TimeOptions[];
+  createdEvent?: EventProps[];
 }
 
 export interface TicketProps {

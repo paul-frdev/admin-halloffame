@@ -7,7 +7,7 @@ import { Modal } from '../modals/Modal';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { cn } from '../lib/utils';
 import { toast } from 'react-toastify';
-import { getEvents, resetStateEvent } from '../store/eventSlice';
+import { deleteEventById, getEvents, resetStateEvent } from '../store/eventSlice';
 import { Title } from '../components/ui/Title';
 
 export const EventList = () => {
@@ -23,7 +23,6 @@ export const EventList = () => {
     dispatch(resetStateEvent());
     dispatch(getEvents());
   }, []);
-
 
   const data = [];
 
@@ -99,6 +98,9 @@ export const EventList = () => {
 
       const formattedPublishDate = `${originalPublishDate?.getFullYear()}-${(originalPublishDate?.getMonth()! + 1).toString().padStart(2, '0')}-${originalPublishDate?.getDate().toString().padStart(2, '0')}`;
 
+      console.log('eventsData[i].ticket_image', eventsData[i].ticket_img);
+      
+
       data.push({
         key: i + 1,
         title: eventsData[i].title,
@@ -111,7 +113,7 @@ export const EventList = () => {
         children_quantity_tickets: eventsData[i].children_quantity_tickets,
         adult_price: eventsData[i].adult_price,
         child_price: eventsData[i].child_price,
-        ticket_image: eventsData[i].ticket_image ? 'YES' : 'NO',
+        ticket_image: eventsData[i].ticket_img.length ? 'YES' : 'NO',
         status: eventsData[i].status,
         action: (
           <span className='flex justify-center items-center'>
@@ -144,7 +146,7 @@ export const EventList = () => {
 
   const deleteEvent = (e: string) => {
     try {
-      // dispatch(deleteArticleById(e));
+      dispatch(deleteEventById(e));
       setOpen(false);
       toast.success('Event deleted successfully')
       setTimeout(() => {

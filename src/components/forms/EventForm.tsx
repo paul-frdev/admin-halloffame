@@ -18,8 +18,47 @@ import { Title } from '../ui/Title';
 import { IOption } from '../../types/store';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { getTickets } from '../../store/ticketSlice';
-import { createEvent, resetStateEvent } from '../../store/eventSlice';
+import { createEvent, getTimeOptions, resetStateEvent } from '../../store/eventSlice';
 import { toast } from 'react-toastify';
+
+
+
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { header: '3' }, { header: '4' }, { font: [] }],
+    [{ size: [12, 14, 16, 18] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
 
 
 const validationSchema = yup.object().shape({
@@ -49,17 +88,16 @@ const validationSchema = yup.object().shape({
   ticketImg: yup.string().required('At least one image is required'),
 });
 
-const timePicker: IOption[] = [{ value: "10:00", label: "10:00" }, { value: "11:00", label: "11:00" }, { value: "12:00", label: "12:00" }, { value: "13:00", label: "13:00" }, { value: "14:00", label: "14:00" }, { value: "15:00", label: "15:00" }, { value: "16:00", label: "16:00" }, { value: "17:00", label: "17:00" }, { value: "18:00", label: "18:00" }, { value: "19:00", label: "19:00" }, { value: "20:00", label: "20:00" }, { value: "21:00", label: "21:00" }]
-
 export const EventForm = () => {
 
-  const [selectedImages, setSelectedImages] = useState<any>('')
+  const [selectedImages, setSelectedImages] = useState<any>('');
+  const [selectedTime, setSelectedTime] = useState<IOption[] | undefined>([])
 
   const location = useLocation()
 
   const dispatch = useAppDispatch()
   const { tickets } = useAppSelector((state: RootState) => state.tickets)
-  const { eventsData } = useAppSelector((state: RootState) => state.events)
+  const { eventsData, timeOptions } = useAppSelector((state: RootState) => state.events)
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues, register, reset } = useForm({
     defaultValues: {
@@ -80,11 +118,19 @@ export const EventForm = () => {
   });
 
   useEffect(() => {
-    dispatch(getTickets())
-  }, [])
+    dispatch(getTickets());
+    dispatch(getTimeOptions());
+  }, []);
+
+  useEffect(() => {
+    const mappedTimeOptions = timeOptions?.map((item) => ({
+      value: item.time_id,
+      label: item.time_label
+    }));
+    setSelectedTime(mappedTimeOptions);
+  }, [timeOptions])
 
   const ticketImages: any = [];
-
 
   tickets.forEach((i) => {
     ticketImages.push({
@@ -104,7 +150,7 @@ export const EventForm = () => {
       dispatch(createEvent(data))
       dispatch(resetStateEvent())
       reset();
-      toast.success('Article added successfully')
+      toast.success('Event added successfully')
     } catch (error) {
       toast.error(`Something went wrong, ${error}`)
     }
@@ -123,6 +169,7 @@ export const EventForm = () => {
     setSelectedImages(ticketImageUrl)
   }
 
+  // logs
 
   return (
     <div>
@@ -157,6 +204,9 @@ export const EventForm = () => {
                 <Title level={5}>Add a description about the event</Title>
                 <ReactQuill
                   theme="snow"
+                  modules={modules}
+                  formats={formats}
+                  placeholder={"Write something..."}
                   className={cn(`my-4 border-[1.5px] rounded-md`, errors.descriptionText ? 'border-[#ef090d]' : ' border-transparent')}
                   {...field}
                   onChange={(text) => {
@@ -181,7 +231,7 @@ export const EventForm = () => {
           <Input type='number' size="large" />
         </FormItem>
         <FormItem name='time' control={control} label='Select event time' help>
-          <Select size="large" mode="multiple" options={timePicker} />
+          <Select size="large" mode="multiple" options={selectedTime} />
         </FormItem>
         <Map name='address' setSelectedAddress={(data: string) => setValue('address', data)} error={errors.address} />
         <div className='flex justify-start items-start gap-x-12'>
