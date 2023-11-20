@@ -27,6 +27,16 @@ import { Event } from '../pages/Event';
 import { Ticket } from '../pages/Ticket';
 import { EventList } from '../pages/EventList';
 import { Product } from '../pages/Product';
+import { Slides } from '../pages/Slides';
+import { SlidesList } from '../pages/SlidesList';
+import { Media } from '../pages/Media';
+import { MediaList } from '../pages/MediaList';
+import { Testimonial } from '../pages/Testimonial';
+import { TestimonialsList } from '../pages/TestimonialsList';
+import { History } from '../pages/History';
+import { AboutUs } from '../pages/AboutUs';
+import { GetRefund } from '../pages/GetRefund';
+import { Contacts } from '../pages/Contacts';
 
 
 
@@ -75,6 +85,20 @@ export const AppRoutes = () => {
         <Route path='blog-category' element={<BlogCategory />} />
         <Route path="blog-category/:id" element={<BlogCategory />} />
         <Route path='blog-list' element={<BlogCategoryList />} />
+        <Route path='slide' element={<Slides />} />
+        <Route path="slide/:id" element={<Slides />} />
+        <Route path='slides-list' element={<SlidesList />} />
+        <Route path='media' element={<Media />} />
+        <Route path='media/:id' element={<Media />} />
+        <Route path='media-list' element={<MediaList />} />
+        <Route path='testimonial' element={<Testimonial />} />
+        <Route path='testimonial/:id' element={<Testimonial />} />
+        <Route path='testimonials-list' element={<TestimonialsList />} />
+        <Route path='history' element={<History />} />
+        <Route path='about-us' element={<AboutUs />} />
+        <Route path='history' element={<History />} />
+        <Route path='refund' element={<GetRefund />} />
+        <Route path='contacts' element={<Contacts />} />
       </Route>
       <Route
         path='/'

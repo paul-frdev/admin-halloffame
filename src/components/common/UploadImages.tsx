@@ -24,9 +24,8 @@ interface UploadImagesProps {
 
 export const UploadImages = ({ name, uploadedImages, register, errors }: UploadImagesProps) => {
 
-  const [isUploading, setIsUploading] = useState(false);
-
   const dispatch = useAppDispatch();
+  
   const { isError, isLoading, isSuccess, images } = useAppSelector((state: RootState) => state.uploadImages)
 
   useEffect(() => {

@@ -190,3 +190,13 @@ export interface TicketProps {
 export interface TicketState extends BasicState {
   tickets: TicketProps[];
 }
+
+export interface SlideProps {
+  slide_id?: string;
+  slide_image: string;
+  title: string;
+  type?: string;
+}
+export interface SlideState extends BasicState {
+  slides: SlideProps[];
+}

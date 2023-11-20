@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Layout, Menu, Button, theme } from 'antd';
+import { Layout, Menu } from 'antd';
 import { AiOutlineDashboard, AiOutlineUsergroupAdd, AiOutlineFolderAdd, AiOutlineBgColors } from 'react-icons/ai'
 import { BiCartAdd } from 'react-icons/bi'
 import { BsCartCheck } from 'react-icons/bs'
@@ -9,7 +9,16 @@ import { PiFoldersBold } from 'react-icons/pi'
 import { ImBlog } from "react-icons/im";
 import { FaClipboardList, FaBloggerB } from "react-icons/fa";
 import { GiResize } from 'react-icons/gi'
-import { LiaWeightHangingSolid } from 'react-icons/lia'
+import { MdOutlineReviews } from "react-icons/md";
+import { MdHistoryEdu } from "react-icons/md";
+import { LuSlidersHorizontal } from "react-icons/lu";
+import { RiRefund2Fill } from "react-icons/ri";
+import { TfiLayoutMediaLeftAlt } from "react-icons/tfi";
+import { TiContacts } from "react-icons/ti";
+import { BiBookContent } from "react-icons/bi";
+import { FaListOl } from "react-icons/fa6";
+import { MdDownloadDone } from "react-icons/md";
+
 import { TbWeight } from 'react-icons/tb'
 import { RiCouponLine } from 'react-icons/ri'
 import { BsTicketDetailed } from 'react-icons/bs'
@@ -17,7 +26,7 @@ import { MdOutlineEventAvailable } from 'react-icons/md'
 import { Logo } from '../icons/Logo';
 import { useNavigate } from 'react-router-dom';
 
-const { Header, Sider, Content } = Layout;
+const { Sider } = Layout;
 
 interface SiderBarProps {
   collapsed: boolean;
@@ -52,6 +61,84 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: '',
             icon: <AiOutlineDashboard size={24} />,
             label: 'Dashboard',
+          },
+          {
+            key: 'content',
+            icon: <BiBookContent size={24} />,
+            label: 'Content',
+            children: [
+              {
+                key: 'slides',
+                icon: <LuSlidersHorizontal size={20} />,
+                label: 'Slides',
+                children: [
+                  {
+                    key: 'slide',
+                    icon: <MdDownloadDone size={20} />,
+                    label: 'Add Slide',
+                  },
+                  {
+                    key: 'slides-list',
+                    icon: <FaListOl size={20} />,
+                    label: 'Slides List',
+                  }
+                ]
+              },
+              {
+                key: 'media-news',
+                icon: <TfiLayoutMediaLeftAlt size={20} />,
+                label: 'Media news',
+                children: [
+                  {
+                    key: 'media',
+                    icon: <MdDownloadDone size={20} />,
+                    label: 'Add Media',
+                  },
+                  {
+                    key: 'media-list',
+                    icon: <FaListOl size={20} />,
+                    label: 'Media- list',
+                  }
+                ]
+              },
+              {
+                key: 'testimonials',
+                icon: <MdOutlineReviews size={20} />,
+                label: 'Testimonials',
+                children: [
+                  {
+                    key: 'testimonial',
+                    icon: <MdDownloadDone size={20} />,
+                    label: 'Add Testimonial',
+                  },
+                  {
+                    key: 'testimonials-list',
+                    icon: <FaListOl size={20} />,
+                    label: 'Testimonials List',
+                  }
+                ]
+              },
+              {
+                key: 'history',
+                icon: <MdHistoryEdu size={20} />,
+                label: 'History',
+              },
+              {
+                key: 'about-us',
+                icon: <MdHistoryEdu size={20} />,
+                label: 'About Us',
+              },
+              {
+                key: 'refund',
+                icon: <RiRefund2Fill size={20} />,
+                label: 'Get a refund',
+              },
+              {
+                key: 'contacts',
+                icon: <TiContacts size={20} />,
+                label: 'Contacts',
+              },
+            ]
           },
           {
             key: 'customers',

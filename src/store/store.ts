@@ -11,6 +11,7 @@ import brandSlice from './brandSlice';
 import productSlice from './productSlice';
 import eventSlice from './eventSlice';
 import ticketSlice from './ticketSlice';
+import sliceSlice from './slideSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     products: productSlice,
     events: eventSlice,
     tickets: ticketSlice,
+    slides: sliceSlice,
   },
 });
 

@@ -182,7 +182,7 @@ export const EventForm = () => {
           uploadedImages={onImageUpload}
           errors={errors.images}
         />
-        <FormItem name='ticketImg' control={control} label='Select image for your Event' help>
+        <FormItem name='ticketImg' control={control} label='Select image for event ticket' help>
           <Select
             size="large"
             options={ticketImages}
