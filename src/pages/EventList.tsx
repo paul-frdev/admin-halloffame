@@ -98,9 +98,6 @@ export const EventList = () => {
 
       const formattedPublishDate = `${originalPublishDate?.getFullYear()}-${(originalPublishDate?.getMonth()! + 1).toString().padStart(2, '0')}-${originalPublishDate?.getDate().toString().padStart(2, '0')}`;
 
-      console.log('eventsData[i].ticket_image', eventsData[i].ticket_img);
-      
-
       data.push({
         key: i + 1,
         title: eventsData[i].title,

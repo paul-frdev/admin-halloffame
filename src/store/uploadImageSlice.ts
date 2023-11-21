@@ -22,6 +22,15 @@ export const deleteImg = createAsyncThunk<string, string | undefined, { rejectVa
   }
 });
 
+export const getImage = createAsyncThunk<ImageUrls[], string, { rejectValue: string }>('get/image', async (id, thunkAPI) => {
+
+  try {
+    return await uploadService.getImageById(id);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 export const resetStateImages = createAction('Reset_all');
 
 const initialState: ImageProps = {
@@ -49,6 +58,21 @@ const uploadImageSlice = createSlice({
         state.images = action.payload;
       })
       .addCase(uploadImg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.images = action.payload;
+      })
+      .addCase(getImage.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

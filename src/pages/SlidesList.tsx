@@ -57,18 +57,18 @@ export const SlidesList = () => {
       image: slideArray.slide_image.length ? 'YES' : 'NO',
       slideType: slideArray.type,
       action: (
-        <span className='flex justify-start'>
+        <span className='flex justify-center items-center'>
           <Link
             to={`/admin/slide/${slideArray.slide_id}`}
-            className=" fs-3 mr-4 text-[#ef090d]"
+            className=" fs-3 mr-4 text-[#ef090d] bg-transparent border-0"
           >
-            <BiEdit />
+            <BiEdit size={20} />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
             onClick={() => showModal(slideArray.slide_id!)}
           >
-            <AiFillDelete />
+            <AiFillDelete size={20} />
           </button>
         </span>
       )

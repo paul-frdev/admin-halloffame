@@ -5,11 +5,11 @@ import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from '../modals/Modal';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { deleteArticleById, getBlogArticles, resetStateArticle } from '../store/articleSlice';
+import { deleteArticleById, getBlogArticles, getMediaArticles, resetStateArticle } from '../store/articleSlice';
 import { cn } from '../lib/utils';
 import { toast } from 'react-toastify';
 
-export const ArticleList = () => {
+export const MediaArticlesList = () => {
 
   const [open, setOpen] = useState(false);
   const [articleId, setArticleId] = useState("");
@@ -20,7 +20,7 @@ export const ArticleList = () => {
 
   useEffect(() => {
     dispatch(resetStateArticle());
-    dispatch(getBlogArticles());
+    dispatch(getMediaArticles());
   }, []);
 
 
@@ -118,7 +118,7 @@ export const ArticleList = () => {
       setOpen(false);
       toast.success('Article deleted successfully')
       setTimeout(() => {
-        dispatch(getBlogArticles());
+        dispatch(getMediaArticles());
       }, 100);
     } catch (error) {
       toast.error(`Something went wrong, ${error}`)

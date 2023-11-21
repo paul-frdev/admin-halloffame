@@ -23,16 +23,16 @@ export const BrandForm = () => {
 
   const navigate = useNavigate();
 
-  const getBrandId = location.pathname.split("/")[3];
+  const brandId = location.pathname.split("/")[3];
 
 
   useEffect(() => {
-    if (getBrandId !== undefined) {
-      dispatch(getBrand(getBrandId));
+    if (brandId !== undefined) {
+      dispatch(getBrand(brandId));
     } else {
       dispatch(resetState());
     }
-  }, [getBrandId]);
+  }, [brandId]);
 
 
   useEffect(() => {
@@ -55,8 +55,8 @@ export const BrandForm = () => {
     },
     validationSchema: schema,
     onSubmit: async (values) => {
-      if (getBrandId !== undefined) {
-        const data = { brand_id: getBrandId, brand_name: values.brand_name }
+      if (brandId !== undefined) {
+        const data = { brand_id: brandId, brand_name: values.brand_name }
         dispatch(updateBrand(data))
       } else {
         dispatch(createBrand(values));
@@ -72,7 +72,7 @@ export const BrandForm = () => {
   return (
     <div>
       <h3 className="mb-4  title">
-        {getBrandId !== undefined ? "Edit" : "Add"} Brand
+        {brandId !== undefined ? "Edit" : "Add"} Brand
       </h3>
       <div>
         <form action="" onSubmit={formik.handleSubmit}>
@@ -92,7 +92,7 @@ export const BrandForm = () => {
             type="submit"
             disabled={isLoading}
           >
-            {getBrandId !== undefined ? "Edit" : "Add"} brand
+            {brandId !== undefined ? "Edit" : "Add"} brand
           </Button>
         </form>
       </div>

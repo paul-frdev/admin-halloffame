@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import * as yup from "yup";
 import { useLocation } from "react-router-dom";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
-import { getCategories } from '../../store/blogCategorySlice';
-import { resetStateArticle } from '../../store/articleSlice';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,7 +9,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Button, Form, Input, Select } from 'antd';
 import { Title } from '../ui/Title';
 import { toast } from 'react-toastify';
-import { createSlide, resetStateSlide } from '../../store/slideSlice';
+import { createSlide, getAllSlides, resetStateSlide } from '../../store/slideSlice';
 
 
 const validationSchema = yup.object().shape({
@@ -35,7 +33,7 @@ export const SlideForm = () => {
 
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const ImageState = useAppSelector((state: RootState) => state.uploadImages.images);
+  const { images } = useAppSelector((state: RootState) => state.uploadImages);
   const { slides } = useAppSelector((state: RootState) => state.slides)
 
   const curSlideId = location.pathname.split("/")[3];
@@ -50,7 +48,7 @@ export const SlideForm = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  ImageState.forEach((i) => {
+  images.forEach((i) => {
     imagesCloudinary.push({
       public_id: i.public_id,
       url: i.url,
@@ -59,8 +57,8 @@ export const SlideForm = () => {
 
 
   useEffect(() => {
-    dispatch(resetStateArticle());
-    dispatch(getCategories())
+    dispatch(resetStateSlide());
+    dispatch(getAllSlides())
   }, []);
 
 
@@ -77,16 +75,13 @@ export const SlideForm = () => {
   }
 
 
-  const SlideType: any = [{ value: 'main_slide', label: 'main_slide' }, { value: 'shop_slide', label: 'shop_slide' },];
+  const slideType: any = [{ value: 'main_slide', label: 'main_slide' }, { value: 'shop_slide', label: 'shop_slide' },];
 
   const onImageUpload = (uploadedImages: ImagesProps[]) => {
     const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
     setValue('image', simplifiedImagesUrls, { shouldValidate: true });
     return simplifiedImagesUrls
   }
-
-  console.log('slides', getValues().slideType);
-
 
   return (
     <div>
@@ -102,7 +97,7 @@ export const SlideForm = () => {
           <Input type='text' size="large" />
         </FormItem>
         <FormItem name="slideType" control={control} label='Select type of Slide' help>
-          <Select size="large" options={SlideType} />
+          <Select size="large" options={slideType} />
         </FormItem>
         <Form.Item className='mt-4'>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">

@@ -43,9 +43,6 @@ export const TicketForm = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  console.log('images', images, getValues());
-
-
   const ticketImageId = location.pathname.split("/")[3];
 
   const onSubmit: SubmitHandler<any> = (data) => {

@@ -2,15 +2,23 @@ import articleService from '../requests/articleService';
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import { ArticleProps, ArticlesState } from '../types/store';
 
-export const getArticles = createAsyncThunk('article/get-articles', async (thunkAPI) => {
+export const getBlogArticles = createAsyncThunk('article/get-blog-articles', async (thunkAPI) => {
   try {
-    return await articleService.getArticles();
+    return await articleService.getBlogArticles();
   } catch (error) {
     console.log(error);
   }
 });
 
-export const getArticleById = createAsyncThunk<ArticleProps[], string, { rejectValue: string }>('article/get-article', async (id, thunkAPI) => {
+export const getMediaArticles = createAsyncThunk('article/get-media-articles', async (thunkAPI) => {
+  try {
+    return await articleService.getMediaArticles();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+export const getArticleById = createAsyncThunk<ArticleProps, string, { rejectValue: string }>('article/get-article', async (id, thunkAPI) => {
   try {
     return await articleService.getArticle(id);
   } catch (error) {
@@ -41,6 +49,7 @@ export const resetStateArticle = createAction('Reset_all');
 
 const initialState: ArticlesState = {
   articles: [],
+  article: undefined,
   articleImages: [],
   isError: false,
   isLoading: false,
@@ -53,16 +62,31 @@ const articlesReducer = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getArticles.pending, (state) => {
+      .addCase(getBlogArticles.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getArticles.fulfilled, (state, action) => {
+      .addCase(getBlogArticles.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.articles = action.payload;
       })
-      .addCase(getArticles.rejected, (state, action) => {
+      .addCase(getBlogArticles.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getMediaArticles.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getMediaArticles.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.articles = action.payload;
+      })
+      .addCase(getMediaArticles.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
@@ -75,7 +99,7 @@ const articlesReducer = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.articles = action.payload;
+        state.article = action.payload;
       })
       .addCase(getArticleById.rejected, (state, action) => {
         state.isLoading = false;

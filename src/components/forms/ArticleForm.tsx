@@ -16,12 +16,15 @@ import { toast } from 'react-toastify';
 import { Calendar } from '../calendar/Calendar';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
+import { getImage } from '../../store/uploadImageSlice';
+
 
 
 const validationSchema = yup.object().shape({
   title: yup.string().required("Title is Required"),
   description: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
   categoryId: yup.string().required("Category is Required"),
+  articleType: yup.string().required("Slide Type is Required"),
   publishDate: yup.date().required('Publish date is required').typeError('Invalid date format'),
   images: yup.array().of(
     yup.object().shape({
@@ -38,50 +41,60 @@ const validationSchema = yup.object().shape({
 
 export const ArticleForm = () => {
 
-  const [curArticleId, setCurArticleId] = useState<any>();
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const ImageState = useAppSelector((state: RootState) => state.uploadImages.images);
+  const { images } = useAppSelector((state: RootState) => state.uploadImages);
   const { bCategories } = useAppSelector((state: RootState) => state.blogCategory);
-  const { articles } = useAppSelector((state: RootState) => state.articles);
+  const { articles, article, isLoading } = useAppSelector((state: RootState) => state.articles);
 
   const articleId = location.pathname.split("/")[3];
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
+  const articleType: any = [{ value: 'media_news', label: 'media_news' }, { value: 'blog_news', label: 'blog_news' },];
+
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues, reset, register } = useForm({
     defaultValues: {
       title: '',
       description: '',
       categoryId: '',
+      articleType: '',
       publishDate: undefined,
       images: []
     },
     resolver: yupResolver(validationSchema),
   });
 
-  ImageState.forEach((i) => {
-    imagesCloudinary.push({
-      public_id: i.public_id,
-      url: i.url,
-    });
-  });
+  useEffect(() => {
+    if (articleId !== undefined) {
+      console.log('article?.images?.[0].public_id!', article?.images?.[0].public_id!);
+      // dispatch(getImage('qha84ihbt1jfdajm5uix'))
+    }
+  }, [articleId])
 
   useEffect(() => {
-    const articleWithId = articles.find((item) => item.article_id === articleId)
-    setCurArticleId(articleWithId);
-    if (articleId !== undefined) {
-      dispatch(getArticleById(articleId))
-    } else {
-      dispatch(resetStateArticle())
+    if (images && images !== undefined) {
+      images.forEach((i) => {
+        imagesCloudinary.push({
+          public_id: i.public_id,
+          url: i.url,
+        });
+      });
     }
-  }, [articleId]);
+  }, [images, article])
+
+  useEffect(() => {
+    if (articleId !== undefined) {
+      dispatch(getArticleById(articleId));
+    } else {
+      dispatch(resetStateArticle());
+    }
+  }, [articleId, article]);
 
   useEffect(() => {
     dispatch(resetStateArticle());
     dispatch(getCategories())
-  }, []);
+  }, [dispatch]);
 
 
   const onSubmit: SubmitHandler<any> = (data) => {
@@ -106,7 +119,7 @@ export const ArticleForm = () => {
   });
 
   const onImageUpload = (uploadedImages: ImagesProps[]) => {
-    const simplifiedImagesUrls = uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any);
+    const simplifiedImagesUrls = images ? uploadedImages.map(i => ({ public_id: i.public_id, url: i.url }) as any) : [];
     setValue('images', simplifiedImagesUrls, { shouldValidate: true });
     return simplifiedImagesUrls
   }
@@ -146,6 +159,9 @@ export const ArticleForm = () => {
         </div>
         <FormItem name="categoryId" control={control} label='Select category for article' help>
           <Select size="large" options={categoryOptions} />
+        </FormItem>
+        <FormItem name="articleType" control={control} label='Select where to post article media or blog' help>
+          <Select size="large" options={articleType} />
         </FormItem>
         <FormItem name='publishDate' control={control} help label="Select date when to publish the article">
           <Calendar

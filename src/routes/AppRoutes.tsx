@@ -29,8 +29,8 @@ import { EventList } from '../pages/EventList';
 import { Product } from '../pages/Product';
 import { Slides } from '../pages/Slides';
 import { SlidesList } from '../pages/SlidesList';
-import { Media } from '../pages/Media';
-import { MediaList } from '../pages/MediaList';
+import { MediaArticle } from '../pages/MediaArticle';
+import { MediaArticlesList } from '../pages/MediaArticlesList';
 import { Testimonial } from '../pages/Testimonial';
 import { TestimonialsList } from '../pages/TestimonialsList';
 import { History } from '../pages/History';
@@ -88,9 +88,9 @@ export const AppRoutes = () => {
         <Route path='slide' element={<Slides />} />
         <Route path="slide/:id" element={<Slides />} />
         <Route path='slides-list' element={<SlidesList />} />
-        <Route path='media' element={<Media />} />
-        <Route path='media/:id' element={<Media />} />
-        <Route path='media-list' element={<MediaList />} />
+        <Route path='media' element={<MediaArticle />} />
+        <Route path='media/:id' element={<MediaArticle />} />
+        <Route path='media-list' element={<MediaArticlesList />} />
         <Route path='testimonial' element={<Testimonial />} />
         <Route path='testimonial/:id' element={<Testimonial />} />
         <Route path='testimonials-list' element={<TestimonialsList />} />

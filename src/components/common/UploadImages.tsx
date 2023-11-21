@@ -28,6 +28,9 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
   
   const { isError, isLoading, isSuccess, images } = useAppSelector((state: RootState) => state.uploadImages)
 
+
+  console.log('uploadImg', images);
+  
   useEffect(() => {
     uploadedImages?.(images)
   }, [images])
@@ -42,13 +45,13 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
   }
 
   const renderSkeleton = (count: number) => {
-    const skeletons = Array.from({ length: count }, (_, index) => (
+    const skeleton = Array.from({ length: count }, (_, index) => (
       <div key={index} className="w-full max-w-[900px]">
         <Skeleton.Image active style={{ width: '100%', height: 400 }} />
       </div>
     ));
 
-    return skeletons;
+    return skeleton;
   }
 
   return (

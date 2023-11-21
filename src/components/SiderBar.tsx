@@ -92,7 +92,7 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
                   {
                     key: 'media',
                     icon: <MdDownloadDone size={20} />,
-                    label: 'Add Media',
+                    label: 'Add Article',
                   },
                   {
                     key: 'media-list',
