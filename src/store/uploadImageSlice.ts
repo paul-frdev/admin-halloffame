@@ -35,6 +35,7 @@ export const resetStateImages = createAction('Reset_all');
 
 const initialState: ImageProps = {
   images: [],
+  image: undefined,
   updatedImage: [],
   isError: false,
   isLoading: false,

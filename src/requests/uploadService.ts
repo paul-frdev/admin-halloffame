@@ -12,11 +12,8 @@ const deleteImage = async (id: string | undefined) => {
 };
 
 const getImageById = async (id: string) => {
-  console.log('id', id);
   
   const response = await axios.get(`${base_url}image/get-image/${id}`, config);
-
-  console.log('response', response);
   
   return response.data;
 };

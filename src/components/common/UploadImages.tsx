@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import Dropzone from "react-dropzone";
-import { deleteImg, uploadImg } from '../../store/uploadImageSlice';
+import { deleteImg, getImage, uploadImg } from '../../store/uploadImageSlice';
 import { AiOutlineClose } from 'react-icons/ai';
 import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 import { cn } from '../../lib/utils';
@@ -20,20 +20,24 @@ interface UploadImagesProps {
   uploadedImages?: (img: ImagesProps[]) => void;
   register?: UseFormRegisterReturn<string>;
   errors?: Merge<FieldError, FieldErrorsImpl<{}>>;
+  publicId?: string;
 }
 
-export const UploadImages = ({ name, uploadedImages, register, errors }: UploadImagesProps) => {
+export const UploadImages = ({ name, uploadedImages, register, errors, publicId }: UploadImagesProps) => {
 
   const dispatch = useAppDispatch();
-  
+
   const { isError, isLoading, isSuccess, images } = useAppSelector((state: RootState) => state.uploadImages)
 
-
-  console.log('uploadImg', images);
-  
   useEffect(() => {
     uploadedImages?.(images)
   }, [images])
+
+  useEffect(() => {
+    if (publicId !== undefined) {
+      dispatch(getImage(publicId))
+    }
+  }, [publicId])
 
 
   const deleteImage = (id: string | undefined) => {
@@ -96,3 +100,4 @@ export const UploadImages = ({ name, uploadedImages, register, errors }: UploadI
     </div>
   )
 }
+

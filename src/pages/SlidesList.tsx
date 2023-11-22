@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Table, Switch } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
-import { deleteSlideById, getAllSlides, resetStateSlide } from '../store/slideSlice';
+import { deleteSlideById, getAllSlides, resetStateSlide, updateIsActiveSlide } from '../store/slideSlice';
 import { SlideProps } from '../types/store';
+
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 
 const columns = [
@@ -39,7 +41,7 @@ export const SlidesList = () => {
   const [slideId, setSlideId] = useState("");
 
   const dispatch = useAppDispatch()
-  const { slides, isSuccess } = useAppSelector((state: RootState) => state.slides)
+  const { slides, isSuccess, isLoading } = useAppSelector((state: RootState) => state.slides)
 
 
   useEffect(() => {
@@ -57,15 +59,23 @@ export const SlidesList = () => {
       image: slideArray.slide_image.length ? 'YES' : 'NO',
       slideType: slideArray.type,
       action: (
-        <span className='flex justify-center items-center'>
+        <span className='flex justify-center items-center gap-x-2'>
+          <Switch
+            checkedChildren={<CheckOutlined />}
+            unCheckedChildren={<CloseOutlined />}
+            defaultChecked
+            loading={isLoading}
+            className=' bg-[#808080]'
+            onClick={() => { dispatch(updateIsActiveSlide(slideArray.slide_id!)) }}
+          />
           <Link
             to={`/admin/slide/${slideArray.slide_id}`}
-            className=" fs-3 mr-4 text-[#ef090d] bg-transparent border-0"
+            className="text-[#ef090d] border-0"
           >
             <BiEdit size={20} />
           </Link>
           <button
-            className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
+            className="text-[#ef090d] border-0"
             onClick={() => showModal(slideArray.slide_id!)}
           >
             <AiFillDelete size={20} />

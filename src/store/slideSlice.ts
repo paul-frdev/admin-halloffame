@@ -26,9 +26,17 @@ export const createSlide = createAsyncThunk<string[], SlideProps, { rejectValue:
   }
 });
 
-export const deleteSlideById = createAsyncThunk<string[], string, { rejectValue: string }>('brand/delete-article', async (id, thunkAPI) => {
+export const deleteSlideById = createAsyncThunk<string[], string, { rejectValue: string }>('slide/delete-slide', async (id, thunkAPI) => {
   try {
     return await slideService.deleteSlide(id);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export const updateIsActiveSlide = createAsyncThunk<string[], string, { rejectValue: string }>('slide/update-active-slide', async (id, thunkAPI) => {
+  try {
+    return await slideService.updateIsActiveSlide(id);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }
@@ -103,6 +111,20 @@ const slidesReducer = createSlice({
         state.isSuccess = true;
       })
       .addCase(deleteSlideById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateIsActiveSlide.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateIsActiveSlide.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(updateIsActiveSlide.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

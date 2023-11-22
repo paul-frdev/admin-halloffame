@@ -16,7 +16,6 @@ import { toast } from 'react-toastify';
 import { Calendar } from '../calendar/Calendar';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { getImage } from '../../store/uploadImageSlice';
 
 
 
@@ -48,7 +47,7 @@ export const ArticleForm = () => {
   const { bCategories } = useAppSelector((state: RootState) => state.blogCategory);
   const { articles, article, isLoading } = useAppSelector((state: RootState) => state.articles);
 
-  const articleId = location.pathname.split("/")[3];
+  const articleId = location.pathname.split("/")[3] || undefined;
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
   const articleType: any = [{ value: 'media_news', label: 'media_news' }, { value: 'blog_news', label: 'blog_news' },];
 
@@ -66,11 +65,12 @@ export const ArticleForm = () => {
   });
 
   useEffect(() => {
-    if (articleId !== undefined) {
-      console.log('article?.images?.[0].public_id!', article?.images?.[0].public_id!);
-      // dispatch(getImage('qha84ihbt1jfdajm5uix'))
-    }
-  }, [articleId])
+    setValue('title', article?.title!)
+    setValue('description', article?.description!)
+    setValue('categoryId', article?.cat_title!)
+    setValue('publishDate', article?.publish_date!)
+    setValue('articleType', article?.article_type!)
+  }, [article])
 
   useEffect(() => {
     if (images && images !== undefined) {
@@ -81,7 +81,7 @@ export const ArticleForm = () => {
         });
       });
     }
-  }, [images, article])
+  }, [images])
 
   useEffect(() => {
     if (articleId !== undefined) {
@@ -89,7 +89,7 @@ export const ArticleForm = () => {
     } else {
       dispatch(resetStateArticle());
     }
-  }, [articleId, article]);
+  }, [articleId]);
 
   useEffect(() => {
     dispatch(resetStateArticle());
@@ -99,13 +99,14 @@ export const ArticleForm = () => {
 
   const onSubmit: SubmitHandler<any> = (data) => {
     data.publishDate = format(data.publishDate, 'yyyy-MM-dd', { locale: uk });
-    try {
+
+    if (articleId === undefined) {
       dispatch(createArticle(data))
       dispatch(resetStateArticle())
       reset();
       toast.success('Article added successfully')
-    } catch (error) {
-      toast.error(`Something went wrong, ${error}`)
+    } else {
+      // TODO update article
     }
   }
 
@@ -133,6 +134,7 @@ export const ArticleForm = () => {
           name='images'
           uploadedImages={onImageUpload}
           errors={errors.images}
+          publicId={article?.images?.[0].public_id!}
         />
         <FormItem name='title' control={control} label='Enter title' help>
           <Input type='text' size="large" />

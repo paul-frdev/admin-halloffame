@@ -29,6 +29,7 @@ export interface ArticleProps {
   created_at?: Date;
   status?: 'draft' | 'published';
   articleType?: 'media_news' | 'blog_news';
+  article_type?: string;
   categoryId?: string;
   images?: ImageUrls[];
   article_id?: string;
@@ -42,7 +43,6 @@ export interface ArticleById {
   cat_title: string;
   category_id: string;
 }
-
 
 export interface ArticlesState extends BasicState {
   articles: ArticleProps[];
@@ -58,6 +58,7 @@ export interface ImageUrls {
 
 export interface ImageProps extends BasicState {
   images: ImageUrls[];
+  image?: ImageUrls;
   updatedImage?: any;
 }
 
@@ -204,3 +205,15 @@ export interface SlideProps {
 export interface SlideState extends BasicState {
   slides: SlideProps[];
 }
+
+export interface TestimonialProps  {
+  image: ImageUrls[];
+  desriptiontext: string;
+  author: string;
+  dignity: string;
+};
+
+export interface TestimonialState extends BasicState {
+  testimonials: TestimonialProps[];
+  testimonial?: TestimonialProps;
+} 

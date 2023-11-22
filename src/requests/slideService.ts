@@ -32,12 +32,19 @@ const updateSlide = async (slide: SlideProps) => {
   return response.data;
 };
 
+const updateIsActiveSlide = async (id: string) => {
+  const response = await axios.get(`${base_url}slides/active/${id}`, config);
+
+  return response.data;
+};
+
 const ticketService = {
   getSlides,
   getSlide,
   createSlide,
   deleteSlide,
   updateSlide,
+  updateIsActiveSlide
 };
 
 export default ticketService;

@@ -40,7 +40,6 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
   const houses = useMemo(() => generateHouses(center), [center]);
 
   const fetchDirections = (house: LatLngLiteral) => {
-    console.log('fetchDirections');
 
     if (!office) return;
 

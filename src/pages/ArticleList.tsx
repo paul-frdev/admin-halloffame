@@ -78,7 +78,7 @@ export const ArticleList = () => {
       data.push({
         key: i + 1,
         name: articles[i].title,
-        description: content.length > 100 ? content.slice(50) + '...' : content,
+        description: content.length > 100 ? content.slice(0, 50) + '...' : content,
         title: articles[i].cat_title,
         created_at: formattedDate,
         publishDate: formattedPublishDate,
