@@ -201,19 +201,32 @@ export interface SlideProps {
   slide_image: string;
   title: string;
   type?: string;
+  is_active?: boolean;
 }
 export interface SlideState extends BasicState {
   slides: SlideProps[];
 }
 
-export interface TestimonialProps  {
+export interface TestimonialProps {
+  testimonial_id?: string;
   image: ImageUrls[];
   desriptiontext: string;
   author: string;
   dignity: string;
-};
+  is_active: boolean;
+}
 
 export interface TestimonialState extends BasicState {
   testimonials: TestimonialProps[];
   testimonial?: TestimonialProps;
-} 
+}
+
+export interface AboutUsProps {
+  about_id: string;
+  about_title: string;
+  about_description: string;
+}
+
+export interface ContentState extends BasicState {
+  aboutUs: AboutUsProps | undefined;
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import { toast } from 'react-toastify';
 import { deleteEventById, getEvents, resetStateEvent } from '../store/eventSlice';
 import { Title } from '../components/ui/Title';
+import { Loader } from '../components/ui/Loader';
 
 export const EventList = () => {
 
@@ -86,10 +87,14 @@ export const EventList = () => {
     },
   ];
 
+  let locale = {
+    emptyText: <Empty />
+  };
+
   if (eventsData !== undefined) {
 
     for (let i = 0; i < eventsData.length; i++) {
-     
+
       const content = eventsData[i].descriptiontext.replace(/<\/?[a-zA-Z]+>/gi, '');
 
       const originalDate = eventsData[i].event_date && new Date(eventsData[i].event_date!);
@@ -157,9 +162,13 @@ export const EventList = () => {
   return (
     <div>
       <Title level={3}>List of events</Title>
-      <div>
-        <Table style={{whiteSpace: 'pre-wrap'}} columns={columns} dataSource={data} />
-      </div>
+      <Table
+        style={{ whiteSpace: 'pre-wrap' }}
+        columns={columns}
+        dataSource={data}
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+      />
       <Modal
         hideModal={hideModal}
         open={open}

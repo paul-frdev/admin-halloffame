@@ -2,6 +2,19 @@ import testimonialService from '../requests/testimonialService';
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import { TestimonialProps, TestimonialState } from '../types/store';
 
+
+type TestimonialsResponse = {
+  is_active: boolean;
+  testimonial_author: string;
+  testimonial_description: string;
+  testimonial_dignity: string;
+  testimonial_id: string;
+  testimonial_image: {
+    public_id: string;
+    url: string;
+  }
+}
+
 export const getTestimonials = createAsyncThunk('testimonial/get-testimonials', async (thunkAPI) => {
   try {
     return await testimonialService.getTestimonials();
@@ -37,6 +50,28 @@ export const deleteTestimonialById = createAsyncThunk<string[], string, { reject
   async (id, thunkAPI) => {
     try {
       return await testimonialService.deleteTestimonial(id);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateTestimonial = createAsyncThunk<TestimonialProps, TestimonialProps, { rejectValue: string }>(
+  'testimonial/update-testimonial',
+  async (testimonial, thunkAPI) => {
+    try {
+      return await testimonialService.updateTestimonial(testimonial);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateIsActiveTestimonial = createAsyncThunk<string[], string, { rejectValue: string }>(
+  'testimonial/update-active-testimonial',
+  async (id, thunkAPI) => {
+    try {
+      return await testimonialService.updateIsActiveTestimonial(id);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -118,7 +153,34 @@ const testimonialsReducer = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-
+      .addCase(updateTestimonial.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTestimonial.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(updateTestimonial.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateIsActiveTestimonial.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateIsActiveTestimonial.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(updateIsActiveTestimonial.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
       .addCase(resetStateTestimonial, () => initialState);
   },
 });

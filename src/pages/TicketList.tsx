@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
@@ -9,6 +9,7 @@ import { resetStateArticle } from '../store/articleSlice';
 import { deleteTicketById, getTickets } from '../store/ticketSlice';
 import { TicketProps } from '../types/store';
 import { deleteImg } from '../store/uploadImageSlice';
+import { Loader } from '../components/ui/Loader';
 
 
 const columns = [
@@ -30,6 +31,11 @@ const columns = [
     dataIndex: "action",
   },
 ];
+
+let locale = {
+  emptyText: <Empty />
+};
+
 
 export const TicketList = () => {
 
@@ -103,7 +109,12 @@ export const TicketList = () => {
     <div>
       <h3 className="mb-4 title">List of articles</h3>
       <div>
-        <Table columns={columns} dataSource={data} />
+        <Table 
+        columns={columns} 
+        dataSource={data} 
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+        />
       </div>
       <Modal
         hideModal={hideModal}

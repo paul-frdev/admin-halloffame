@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import { deleteProductById, getProducts, resetStateProduct } from '../store/prod
 import { Modal } from '../modals/Modal';
 import { Button } from '../components/ui/Button';
 import { toast } from 'react-toastify';
+import { Loader } from '../components/ui/Loader';
 
 
 
@@ -46,6 +47,9 @@ const columns = [
   },
 ];
 
+let locale = {
+  emptyText: <Empty />
+};
 
 export const ProductList = () => {
 
@@ -53,7 +57,7 @@ export const ProductList = () => {
   const [productId, setProductId] = useState("");
 
   const dispatch = useAppDispatch()
-  const productState = useAppSelector((state: RootState) => state.products.products);
+  const { products, isLoading } = useAppSelector((state: RootState) => state.products);
 
 
   useEffect(() => {
@@ -62,8 +66,8 @@ export const ProductList = () => {
   }, [])
 
   const product: any = [];
-  for (let i = 0; i < productState?.length!; i++) {
-    const productArray: any = productState?.[i];
+  for (let i = 0; i < products?.length!; i++) {
+    const productArray: any = products?.[i];
 
     product.push({
       key: i + 1,
@@ -111,7 +115,12 @@ export const ProductList = () => {
     <div>
       <h3 className="mb-4 title">Product List</h3>
       <div>
-        <Table columns={columns} dataSource={product} />
+        <Table
+          columns={columns}
+          dataSource={product}
+          loading={{ indicator: <Loader />, spinning: isLoading }}
+          locale={locale}
+        />
         <Modal
           hideModal={hideModal}
           open={open}

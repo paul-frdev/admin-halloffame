@@ -42,6 +42,14 @@ export const updateIsActiveSlide = createAsyncThunk<string[], string, { rejectVa
   }
 });
 
+export const updateSlide = createAsyncThunk<SlideProps, SlideProps, { rejectValue: string }>('slide/update-slide', async (slide, thunkAPI) => {
+  try {
+    return await slideService.updateSlide(slide);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 export const resetStateSlide = createAction('Reset_all');
 
 const initialState: SlideState = {
@@ -116,15 +124,25 @@ const slidesReducer = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      .addCase(updateIsActiveSlide.pending, (state) => {
-        state.isLoading = true;
-      })
       .addCase(updateIsActiveSlide.fulfilled, (state, action: any) => {
-        state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
       })
       .addCase(updateIsActiveSlide.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateSlide.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateSlide.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(updateSlide.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from '../modals/Modal';
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { deleteArticleById, getBlogArticles, getMediaArticles, resetStateArticle } from '../store/articleSlice';
+import { deleteArticleById, getMediaArticles, resetStateArticle } from '../store/articleSlice';
 import { cn } from '../lib/utils';
 import { toast } from 'react-toastify';
+import { Loader } from '../components/ui/Loader';
+
+let locale = {
+  emptyText: <Empty />
+};
 
 export const MediaArticlesList = () => {
 
@@ -128,9 +133,12 @@ export const MediaArticlesList = () => {
   return (
     <div>
       <h3 className="mb-4 title">List of articles</h3>
-      <div>
-        <Table columns={columns} dataSource={data} />
-      </div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+      />
       <Modal
         hideModal={hideModal}
         open={open}

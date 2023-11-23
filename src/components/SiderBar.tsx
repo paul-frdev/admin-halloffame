@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Layout, Menu } from 'antd';
 import { AiOutlineDashboard, AiOutlineUsergroupAdd, AiOutlineFolderAdd, AiOutlineBgColors } from 'react-icons/ai'
 import { BiCartAdd } from 'react-icons/bi'
@@ -25,6 +25,10 @@ import { BsTicketDetailed } from 'react-icons/bs'
 import { MdOutlineEventAvailable } from 'react-icons/md'
 import { Logo } from '../icons/Logo';
 import { useNavigate } from 'react-router-dom';
+import { RootState, useAppDispatch, useAppSelector } from '../store/store';
+import { getAllSlides } from '../store/slideSlice';
+import { getTestimonials } from '../store/testimonialSlice';
+import { getMediaArticles } from '../store/articleSlice';
 
 const { Sider } = Layout;
 
@@ -61,6 +65,7 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: '',
             icon: <AiOutlineDashboard size={24} />,
             label: 'Dashboard',
+            disabled: true
           },
           {
             key: 'content',
@@ -144,6 +149,7 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: 'customers',
             icon: <AiOutlineUsergroupAdd size={24} />,
             label: 'Customers',
+            disabled: true,
             children: [
               {
                 key: 'product-cart',
@@ -161,6 +167,7 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: 'catalog',
             icon: <BsCartCheck size={24} />,
             label: 'Catalog',
+            disabled: true,
             children: [
               {
                 key: 'product',
@@ -255,11 +262,13 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: "orders",
             icon: <FaClipboardList size={24} />,
             label: "Orders",
+            disabled: true
           },
           {
             key: "marketing",
             icon: <RiCouponLine size={24} />,
             label: "Marketing",
+            disabled: true,
             children: [
               {
                 key: "coupon",
@@ -304,6 +313,7 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
             key: "enquiries",
             icon: <FaClipboardList size={24} />,
             label: "Enquiries",
+            disabled: true
           },
         ]}
       />

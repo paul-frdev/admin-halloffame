@@ -7,23 +7,21 @@ import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Checkbox } from 'antd';
 import ReactQuill from 'react-quill';
 import { cn } from '../../lib/utils';
 import { Title } from '../ui/Title';
 import { toast } from 'react-toastify';
-import { format } from 'date-fns';
-import { uk } from 'date-fns/locale';
 import { createTestimonial, getTestimonial, resetStateTestimonial } from '../../store/testimonialSlice';
 
 
 
 const validationSchema = yup.object().shape({
   desriptiontext: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
-  image: yup.array().of(
-    yup.object()),
+  image: yup.array().of(yup.object()),
   author: yup.string().required('Author field is required'),
   dignity: yup.string(),
+  is_active: yup.boolean()
 });
 
 export const TestimonialForm = () => {
@@ -31,7 +29,7 @@ export const TestimonialForm = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { images } = useAppSelector((state: RootState) => state.uploadImages);
-  const { testimonial } = useAppSelector((state: RootState) => state.testimonials);
+  const { testimonial, testimonials } = useAppSelector((state: RootState) => state.testimonials);
 
   const testimonialId = location.pathname.split("/")[3] || undefined;
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
@@ -42,15 +40,19 @@ export const TestimonialForm = () => {
       desriptiontext: '',
       image: [],
       author: '',
-      dignity: ''
+      dignity: '',
+      is_active: false
     },
     resolver: yupResolver(validationSchema),
   });
 
   useEffect(() => {
+    // console.log('useeefect testimonial');
+    
     setValue('desriptiontext', testimonial?.desriptiontext!)
     setValue('author', testimonial?.author!)
     setValue('dignity', testimonial?.dignity!)
+    setValue('is_active', testimonial?.is_active! ?? false)
   }, [testimonial])
 
   useEffect(() => {
@@ -79,8 +81,6 @@ export const TestimonialForm = () => {
 
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    data.publishDate = format(data.publishDate, 'yyyy-MM-dd', { locale: uk });
-
     if (testimonialId === undefined) {
       dispatch(createTestimonial(data))
       dispatch(resetStateTestimonial())
@@ -133,6 +133,11 @@ export const TestimonialForm = () => {
         </FormItem>
         <FormItem name='dignity' control={control} label='Enter dignity' help>
           <Input type='text' size="large" />
+        </FormItem>
+        <FormItem control={control} name='is_active' valuePropName="is_active">
+          <Checkbox
+            defaultChecked={false}
+            className='!text-[16px]' >Publish review on website</Checkbox>
         </FormItem>
         <Form.Item className='mt-4'>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">

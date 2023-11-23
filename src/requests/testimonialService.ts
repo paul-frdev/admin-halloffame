@@ -26,11 +26,29 @@ const deleteTestimonial = async (id: string) => {
   return response.data;
 };
 
+const updateTestimonial = async (testimonial: TestimonialProps) => {
+  const response = await axios.put(
+    `${base_url}testimonial/${testimonial.testimonial_id}`,
+    { image: testimonial.image, desriptiontext: testimonial.desriptiontext, author: testimonial.author, dignity: testimonial.dignity },
+    config
+  );
+
+  return response.data;
+};
+
+const updateIsActiveTestimonial = async (id: string) => {
+  const response = await axios.put(`${base_url}testimonial/active/${id}`, config);
+
+  return response.data;
+};
+
 const testimonialService = {
   createTestimonial,
   getTestimonials,
   getTestimonial,
   deleteTestimonial,
+  updateIsActiveTestimonial,
+  updateTestimonial,
 };
 
 export default testimonialService;

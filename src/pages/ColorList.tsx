@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { deleteAColorById, getColors, resetState } from '../store/colorSlice';
 import { toast } from 'react-toastify';
+import { Loader } from '../components/ui/Loader';
+import { Title } from '../components/ui/Title';
 
 
 const columns = [
@@ -25,6 +27,10 @@ const columns = [
     dataIndex: "action",
   },
 ];
+
+let locale = {
+  emptyText: <Empty />
+};
 
 export const ColorList = () => {
   const [open, setOpen] = useState(false);
@@ -92,16 +98,19 @@ export const ColorList = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Blogs List</h3>
-      <div>
-        <Table columns={columns} dataSource={data} />
-        <Modal
-          hideModal={hideModal}
-          open={open}
-          performAction={() => { deleteColor(colorId) }}
-          title="Are you sure you want to delete color?"
-        />
-      </div>
+      <Title level={3}>Blogs List</Title>
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+      />
+      <Modal
+        hideModal={hideModal}
+        open={open}
+        performAction={() => { deleteColor(colorId) }}
+        title="Are you sure you want to delete color?"
+      />
     </div>
   )
 }

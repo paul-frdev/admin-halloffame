@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
 import { deleteSizeById, getSizes, resetState } from '../store/sizeSlice';
+import { Loader } from '../components/ui/Loader';
 
 
 const columns = [
@@ -25,6 +26,10 @@ const columns = [
     dataIndex: "action",
   },
 ];
+
+let locale = {
+  emptyText: <Empty />
+};
 
 export const SizeList = () => {
   const [open, setOpen] = useState(false);
@@ -94,7 +99,12 @@ export const SizeList = () => {
     <div>
       <h3 className="mb-4 title">Size List</h3>
       <div>
-        <Table columns={columns} dataSource={data} />
+        <Table
+          columns={columns}
+          dataSource={data}
+          loading={{ indicator: <Loader />, spinning: isLoading }}
+          locale={locale}
+        />
         <Modal
           hideModal={hideModal}
           open={open}

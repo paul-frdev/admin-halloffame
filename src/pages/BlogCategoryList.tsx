@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Empty, Table } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
@@ -7,6 +7,8 @@ import { deleteBlogCategoryById, getCategories, resetStateBlogCategory } from '.
 import { Link } from 'react-router-dom';
 import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
+import { Loader } from '../components/ui/Loader';
+import { Title } from '../components/ui/Title';
 
 
 const columns = [
@@ -26,12 +28,17 @@ const columns = [
   },
 ];
 
+let locale = {
+  emptyText: <Empty />
+};
+
+
 export const BlogCategoryList = () => {
   const [open, setOpen] = useState(false);
   const [blogCatId, setBlogCatId] = useState("");
 
   const dispatch = useAppDispatch()
-  const { bCategories, isSuccess } = useAppSelector((state: RootState) => state.blogCategory)
+  const { bCategories, isSuccess, isLoading } = useAppSelector((state: RootState) => state.blogCategory)
 
   useEffect(() => {
     dispatch(resetStateBlogCategory());
@@ -88,16 +95,19 @@ export const BlogCategoryList = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title">Blogs List</h3>
-      <div>
-        <Table columns={columns} dataSource={data} />
-        <Modal
-          hideModal={hideModal}
-          open={open}
-          performAction={() => { deleteBlogCategory(blogCatId) }}
-          title="Are you sure you want to delete this blog category?"
-        />
-      </div>
+      <Title level={3}>Blogs List</Title>
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+      />
+      <Modal
+        hideModal={hideModal}
+        open={open}
+        performAction={() => { deleteBlogCategory(blogCatId) }}
+        title="Are you sure you want to delete this blog category?"
+      />
     </div>
   )
 }
