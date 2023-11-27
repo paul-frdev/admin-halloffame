@@ -3,18 +3,6 @@ import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import { TestimonialProps, TestimonialState } from '../types/store';
 
 
-type TestimonialsResponse = {
-  is_active: boolean;
-  testimonial_author: string;
-  testimonial_description: string;
-  testimonial_dignity: string;
-  testimonial_id: string;
-  testimonial_image: {
-    public_id: string;
-    url: string;
-  }
-}
-
 export const getTestimonials = createAsyncThunk('testimonial/get-testimonials', async (thunkAPI) => {
   try {
     return await testimonialService.getTestimonials();
@@ -78,6 +66,15 @@ export const updateIsActiveTestimonial = createAsyncThunk<string[], string, { re
   }
 );
 
+// get tags
+export const getAdminTag = createAsyncThunk('tags/get-tags-admin', async (thunkAPI) => {
+  try {
+    return await testimonialService.getAdminTag();
+  } catch (error: any) {
+    console.log(error);
+  }
+});
+
 export const resetStateTestimonial = createAction('Reset_all');
 
 const initialState: TestimonialState = {
@@ -87,6 +84,7 @@ const initialState: TestimonialState = {
   isLoading: false,
   isSuccess: false,
   message: '',
+  adminTag: '',
 };
 const testimonialsReducer = createSlice({
   name: 'testimonials',
@@ -176,6 +174,21 @@ const testimonialsReducer = createSlice({
         state.isSuccess = true;
       })
       .addCase(updateIsActiveTestimonial.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getAdminTag.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAdminTag.fulfilled, (state, action: any) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.adminTag = action.payload;
+      })
+      .addCase(getAdminTag.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

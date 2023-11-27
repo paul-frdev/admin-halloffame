@@ -25,10 +25,6 @@ import { BsTicketDetailed } from 'react-icons/bs'
 import { MdOutlineEventAvailable } from 'react-icons/md'
 import { Logo } from '../icons/Logo';
 import { useNavigate } from 'react-router-dom';
-import { RootState, useAppDispatch, useAppSelector } from '../store/store';
-import { getAllSlides } from '../store/slideSlice';
-import { getTestimonials } from '../store/testimonialSlice';
-import { getMediaArticles } from '../store/articleSlice';
 
 const { Sider } = Layout;
 

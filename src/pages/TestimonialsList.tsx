@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Switch, Spin, Empty } from "antd";
+import { Table, Switch, Empty, Typography } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
@@ -8,6 +8,8 @@ import { Modal } from '../modals/Modal';
 import { toast } from 'react-toastify';
 import { TestimonialProps } from '../types/store';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Tag } from 'antd';
+
 import { deleteTestimonialById, getTestimonials, resetStateTestimonial, updateIsActiveTestimonial } from '../store/testimonialSlice';
 import { Loader } from '../components/ui/Loader';
 import { Title } from '../components/ui/Title';
@@ -55,6 +57,13 @@ export const TestimonialsList = () => {
 
   const [testmLoading, setTestmLoading] = useState<string[]>(Array(testimonials?.length || 0).fill(''));
 
+
+  useEffect(() => {
+    dispatch(resetStateTestimonial());
+    dispatch(getTestimonials())
+  }, [])
+
+
   const handleActiveTestm = async (id: string, index: number) => {
     setTestmLoading((prevLoading) => {
       const updatedLoading = [...prevLoading];
@@ -64,6 +73,7 @@ export const TestimonialsList = () => {
 
     try {
       await dispatch(updateIsActiveTestimonial(id));
+      await dispatch(getTestimonials());
 
       setTestmLoading((prevLoading) => {
         const updatedLoading = [...prevLoading];
@@ -81,17 +91,24 @@ export const TestimonialsList = () => {
   };
 
 
-  useEffect(() => {
-    dispatch(resetStateTestimonial());
-    dispatch(getTestimonials())
-  }, [])
-
   const data = [];
 
   for (let i = 0; i < testimonials?.length!; i++) {
     const testmArray: TestimonialProps = testimonials?.[i];
+
+    const isActiveAdmin = !testmArray.is_active && testmLoading[i] === '';
+    const isActiveSuccess = testmArray.is_active;
+
+
     data.push({
-      key: i + 1,
+      key: (
+        <span className='flex justify-start gap-x-2'>
+          <span className='text-lg w-[20px]'>{i + 1}</span>
+          <span className=' pb-[2px] px-[1px] flex justify-center items-center uppercase'>
+            {isActiveAdmin ? <Tag color="error">Admin</Tag> : isActiveSuccess ? <Tag color="success">Success</Tag> : null}
+          </span>
+        </span>
+      ),
       text: testmArray.desriptiontext,
       image: testmArray.image.length ? 'YES' : 'NO',
       author: testmArray.author,
@@ -151,17 +168,37 @@ export const TestimonialsList = () => {
     <div>
       <Title level={3}>Testimonial List</Title>
       <Table
-          columns={columns}
-          dataSource={data}
-          loading={{ indicator: <Loader />, spinning: isLoading }}
-          locale={locale}
-        />
-        <Modal
-          hideModal={hideModal}
-          open={open}
-          performAction={() => { deleteTestimonial(testmId) }}
-          title="Are you sure you want to delete Testimonial?"
-        />
+        columns={columns}
+        dataSource={data}
+        loading={{ indicator: <Loader />, spinning: isLoading }}
+        locale={locale}
+      />
+      <Modal
+        hideModal={hideModal}
+        open={open}
+        performAction={() => { deleteTestimonial(testmId) }}
+        title="Are you sure you want to delete Testimonial?"
+      />
+      <div className='flex-col justify-start items-start mt-8'>
+        <div className='flex justify-start items-center h-[22px] mb-2'>
+          <span className='pb-[2px] px-[1px] flex justify-center items-center mr-4 uppercase'>
+            <Tag color="error">Admin</Tag>
+          </span>
+          <Typography className='text-[#808080]'> - a review was written by admin, but hasn't approved yet</Typography>
+        </div>
+        <div className='flex justify-start items-center mb-2'>
+          <span className='pb-[2px] px-[1px] flex justify-center items-center mr-4 uppercase'>
+            <Tag color="error">User</Tag>
+          </span>
+          <Typography className='text-[#808080]'> - created review by user, but not published on website</Typography>
+        </div>
+        <div className='flex justify-start items-center'>
+          <span className='pb-[2px] px-[1px] flex justify-center items-center mr-4 uppercase'>
+            <Tag color="success">Success</Tag>
+          </span>
+          <Typography className='text-[#808080]'> - approved review by admin and published on website</Typography>
+        </div>
+      </div>
     </div>
   )
 }

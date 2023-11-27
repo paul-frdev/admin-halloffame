@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import * as yup from "yup";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { getCategories } from '../../store/blogCategorySlice';
 import { createArticle, getArticleById, resetStateArticle } from '../../store/articleSlice';
@@ -41,7 +41,6 @@ const validationSchema = yup.object().shape({
 export const ArticleForm = () => {
 
   const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { images } = useAppSelector((state: RootState) => state.uploadImages);
   const { bCategories } = useAppSelector((state: RootState) => state.blogCategory);

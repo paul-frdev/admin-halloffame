@@ -10,6 +10,14 @@ export const getAboutUs = createAsyncThunk<AboutUsProps, string, { rejectValue: 
   }
 });
 
+export const getCurAbout = createAsyncThunk('about/get-cur-about', async (thunkAPI) => {
+  try {
+    return await contentService.getAboutUs();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 export const createAbout = createAsyncThunk<AboutUsProps, AboutUsProps, { rejectValue: string }>('about/create-about', async (about, thunkAPI) => {
   try {
     return await contentService.createAboutUs(about);
@@ -71,6 +79,21 @@ const contentReducer = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
+      .addCase(getCurAbout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCurAbout.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.aboutUs = action.payload;
+      })
+      .addCase(getCurAbout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
       .addCase(updateAboutUs.pending, (state) => {
         state.isLoading = true;
       })
@@ -84,7 +107,7 @@ const contentReducer = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload;
       })
       .addCase(resetStateContent, () => initialState);
   },

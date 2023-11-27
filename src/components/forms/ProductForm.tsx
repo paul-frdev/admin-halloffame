@@ -121,7 +121,6 @@ export const ProductForm = () => {
   const [optionCategory, setOptionCategory] = useState<OptionType[] | undefined>([])
   const [optionTags, setOptionTags] = useState<OptionType[] | undefined>([])
 
-  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
 

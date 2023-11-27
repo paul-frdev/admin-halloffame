@@ -20,45 +20,7 @@ import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { getTickets } from '../../store/ticketSlice';
 import { createEvent, getTimeOptions, resetStateEvent } from '../../store/eventSlice';
 import { toast } from 'react-toastify';
-
-
-
-const modules = {
-  toolbar: [
-    [{ header: '1' }, { header: '2' }, { header: '3' }, { header: '4' }, { font: [] }],
-    [{ size: [12, 14, 16, 18] }],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [
-      { list: 'ordered' },
-      { list: 'bullet' },
-      { indent: '-1' },
-      { indent: '+1' },
-    ],
-    ['link', 'image', 'video'],
-    ['clean'],
-  ],
-  clipboard: {
-    // toggle to add extra line breaks when pasting HTML:
-    matchVisual: false,
-  },
-}
-
-const formats = [
-  'header',
-  'font',
-  'size',
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'blockquote',
-  'list',
-  'bullet',
-  'indent',
-  'link',
-  'image',
-  'video',
-]
+import { formats, container } from '../editor/constants';
 
 
 const validationSchema = yup.object().shape({
@@ -116,6 +78,8 @@ export const EventForm = () => {
     },
     resolver: yupResolver(validationSchema),
   });
+
+  const modules = { toolbar: { container }}
 
   useEffect(() => {
     dispatch(getTickets());

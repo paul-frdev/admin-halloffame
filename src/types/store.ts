@@ -209,6 +209,7 @@ export interface SlideState extends BasicState {
 
 export interface TestimonialProps {
   testimonial_id?: string;
+  adminTag: string;
   image: ImageUrls[];
   desriptiontext: string;
   author: string;
@@ -219,6 +220,7 @@ export interface TestimonialProps {
 export interface TestimonialState extends BasicState {
   testimonials: TestimonialProps[];
   testimonial?: TestimonialProps;
+  adminTag?: string;
 }
 
 export interface AboutUsProps {

@@ -42,6 +42,12 @@ const updateIsActiveTestimonial = async (id: string) => {
   return response.data;
 };
 
+// get tags
+const getAdminTag = async () => {
+  const response = await axios.get(`${base_url}tags/admin`);
+  return response.data;
+};
+
 const testimonialService = {
   createTestimonial,
   getTestimonials,
@@ -49,6 +55,7 @@ const testimonialService = {
   deleteTestimonial,
   updateIsActiveTestimonial,
   updateTestimonial,
+  getAdminTag,
 };
 
 export default testimonialService;

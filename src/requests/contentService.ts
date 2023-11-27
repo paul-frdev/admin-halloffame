@@ -15,8 +15,15 @@ const getAbout = async (id: string) => {
   return response.data;
 };
 
+const getAboutUs = async () => {
+  const response = await axios.get(`${base_url}about`, config);
+
+  return response.data;
+};
+
+
 const updateAbout = async (about: AboutUsProps) => {
-  const response = await axios.put(`${base_url}about/${about.about_id}`, { title: about.about_title, description: about.about_description }, config);
+  const response = await axios.put(`${base_url}about/${about.about_id}`, { about_title: about.about_title, about_description: about.about_description }, config);
 
   return response.data;
 };
@@ -27,6 +34,7 @@ const contentService = {
   getAbout,
   createAboutUs,
   updateAbout,
+  getAboutUs
 };
 
 export default contentService;

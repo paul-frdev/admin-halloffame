@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import Dropzone from "react-dropzone";
 import { deleteImg, getImage, uploadImg } from '../../store/uploadImageSlice';
@@ -7,7 +7,8 @@ import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react
 import { cn } from '../../lib/utils';
 import { Text } from '../ui/Text';
 import { toast } from 'react-toastify';
-import { Skeleton } from 'antd';
+import { Empty, Table } from 'antd';
+import { Loader } from '../ui/Loader';
 
 
 export type ImagesProps = {
@@ -48,16 +49,6 @@ export const UploadImages = ({ name, uploadedImages, register, errors, publicId 
     }
   }
 
-  const renderSkeleton = (count: number) => {
-    const skeleton = Array.from({ length: count }, (_, index) => (
-      <div key={index} className="w-full max-w-[900px]">
-        <Skeleton.Image active style={{ width: '100%', height: 400 }} />
-      </div>
-    ));
-
-    return skeleton;
-  }
-
   return (
     <div className='flex relative flex-col justify-start items-start w-full'>
       {errors?.message ? <Text className='absolute -top-[31px] right-0 uppercase' type="danger">{errors.message}</Text> : null}
@@ -78,7 +69,7 @@ export const UploadImages = ({ name, uploadedImages, register, errors, publicId 
         </Dropzone>
       </div>
       <div className="flex flex-wrap my-4 gap-3  w-full">
-        {isLoading ? renderSkeleton(1) : (images?.map((image, j) => {
+        {isLoading ? <Loader /> : (images?.map((image, j) => {
           return (
             <div className="w-full" key={j}>
 

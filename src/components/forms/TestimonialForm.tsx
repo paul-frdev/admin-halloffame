@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import * as yup from "yup";
 import { useLocation } from "react-router-dom";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
-import { getCategories } from '../../store/blogCategorySlice';
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { FormItem } from '../ui/FormItem';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,7 +11,7 @@ import ReactQuill from 'react-quill';
 import { cn } from '../../lib/utils';
 import { Title } from '../ui/Title';
 import { toast } from 'react-toastify';
-import { createTestimonial, getTestimonial, resetStateTestimonial } from '../../store/testimonialSlice';
+import { createTestimonial, getAdminTag, getTestimonial, resetStateTestimonial } from '../../store/testimonialSlice';
 
 
 
@@ -21,7 +20,8 @@ const validationSchema = yup.object().shape({
   image: yup.array().of(yup.object()),
   author: yup.string().required('Author field is required'),
   dignity: yup.string(),
-  is_active: yup.boolean()
+  is_active: yup.boolean(),
+  adminTag: yup.string()
 });
 
 export const TestimonialForm = () => {
@@ -29,31 +29,37 @@ export const TestimonialForm = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { images } = useAppSelector((state: RootState) => state.uploadImages);
-  const { testimonial, testimonials } = useAppSelector((state: RootState) => state.testimonials);
+  const { testimonial, adminTag } = useAppSelector((state: RootState) => state.testimonials);
 
   const testimonialId = location.pathname.split("/")[3] || undefined;
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
 
 
-  const { control, handleSubmit, formState: { errors }, setValue, getValues, reset, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm({
     defaultValues: {
       desriptiontext: '',
       image: [],
       author: '',
       dignity: '',
-      is_active: false
+      is_active: false,
+      adminTag: ''
     },
     resolver: yupResolver(validationSchema),
   });
 
   useEffect(() => {
-    // console.log('useeefect testimonial');
-    
+    dispatch(getAdminTag())
+    dispatch(resetStateTestimonial());
+  }, [dispatch]);
+
+
+  useEffect(() => {
     setValue('desriptiontext', testimonial?.desriptiontext!)
     setValue('author', testimonial?.author!)
     setValue('dignity', testimonial?.dignity!)
     setValue('is_active', testimonial?.is_active! ?? false)
   }, [testimonial])
+
 
   useEffect(() => {
     if (images && images !== undefined) {
@@ -74,13 +80,10 @@ export const TestimonialForm = () => {
     }
   }, [testimonialId]);
 
-  useEffect(() => {
-    dispatch(resetStateTestimonial());
-    dispatch(getCategories())
-  }, [dispatch]);
-
 
   const onSubmit: SubmitHandler<any> = (data) => {
+    setValue('adminTag', adminTag)
+
     if (testimonialId === undefined) {
       dispatch(createTestimonial(data))
       dispatch(resetStateTestimonial())
