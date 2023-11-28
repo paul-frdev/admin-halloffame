@@ -229,6 +229,21 @@ export interface AboutUsProps {
   about_description: string;
 }
 
+export interface ContactsProps {
+  contacts_id: string;
+  contacts_title: string;
+  contacts_address: string;
+  contacts_email: string;
+  contacts_phone: string;
+}
+
+export interface RefundProps {
+  refund_id: string;
+  refund_text: string;
+}
+
 export interface ContentState extends BasicState {
   aboutUs: AboutUsProps | undefined;
+  contacts: ContactsProps | undefined;
+  refund: RefundProps | undefined;
 }

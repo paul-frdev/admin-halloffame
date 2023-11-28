@@ -120,11 +120,6 @@ const SiderBar: React.FC<SiderBarProps> = ({ collapsed }) => {
                 ]
               },
               {
-                key: 'history',
-                icon: <MdHistoryEdu size={20} />,
-                label: 'History',
-              },
-              {
                 key: 'about-us',
                 icon: <MdHistoryEdu size={20} />,
                 label: 'About Us',

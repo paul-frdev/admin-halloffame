@@ -85,6 +85,7 @@ export const SlidesList = () => {
 
   for (let i = 0; i < slides?.length!; i++) {
     const slideArray: SlideProps = slides?.[i];
+    
     data.push({
       key: i + 1,
       title: slideArray.title,

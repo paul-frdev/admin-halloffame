@@ -165,9 +165,6 @@ const testimonialsReducer = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      .addCase(updateIsActiveTestimonial.pending, (state) => {
-        state.isLoading = true;
-      })
       .addCase(updateIsActiveTestimonial.fulfilled, (state, action: any) => {
         state.isLoading = false;
         state.isError = false;

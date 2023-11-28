@@ -116,7 +116,7 @@ export const AboutUsForm = () => {
         </div>
         <Form.Item>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
-            Submit
+          {aboutUsId === undefined ? "Create" : "Edit and save"}
           </Button>
         </Form.Item>
       </Form>

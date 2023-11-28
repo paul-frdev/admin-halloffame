@@ -33,7 +33,6 @@ import { MediaArticle } from '../pages/MediaArticle';
 import { MediaArticlesList } from '../pages/MediaArticlesList';
 import { Testimonial } from '../pages/Testimonial';
 import { TestimonialsList } from '../pages/TestimonialsList';
-import { History } from '../pages/History';
 import { AboutUs } from '../pages/AboutUs';
 import { GetRefund } from '../pages/GetRefund';
 import { Contacts } from '../pages/Contacts';
@@ -94,9 +93,7 @@ export const AppRoutes = () => {
         <Route path='testimonial' element={<Testimonial />} />
         <Route path='testimonial/:id' element={<Testimonial />} />
         <Route path='testimonials-list' element={<TestimonialsList />} />
-        <Route path='history' element={<History />} />
         <Route path='about-us' element={<AboutUs />} />
-        <Route path='history' element={<History />} />
         <Route path='refund' element={<GetRefund />} />
         <Route path='contacts' element={<Contacts />} />
       </Route>

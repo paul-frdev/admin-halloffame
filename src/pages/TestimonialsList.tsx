@@ -10,7 +10,7 @@ import { TestimonialProps } from '../types/store';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 
-import { deleteTestimonialById, getTestimonials, resetStateTestimonial, updateIsActiveTestimonial } from '../store/testimonialSlice';
+import { deleteTestimonialById, getAdminTag, getTestimonials, resetStateTestimonial, updateIsActiveTestimonial } from '../store/testimonialSlice';
 import { Loader } from '../components/ui/Loader';
 import { Title } from '../components/ui/Title';
 
@@ -19,6 +19,10 @@ const columns = [
   {
     title: "SNo",
     dataIndex: "key",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
   },
   {
     title: "Text",
@@ -53,7 +57,7 @@ export const TestimonialsList = () => {
   const [testmId, setTestmId] = useState("");
 
   const dispatch = useAppDispatch()
-  const { testimonials, isSuccess, isLoading } = useAppSelector((state: RootState) => state.testimonials)
+  const { testimonials, isSuccess, isLoading, adminTag } = useAppSelector((state: RootState) => state.testimonials)
 
   const [testmLoading, setTestmLoading] = useState<string[]>(Array(testimonials?.length || 0).fill(''));
 
@@ -61,6 +65,7 @@ export const TestimonialsList = () => {
   useEffect(() => {
     dispatch(resetStateTestimonial());
     dispatch(getTestimonials())
+    dispatch(getAdminTag())
   }, [])
 
 
@@ -73,7 +78,6 @@ export const TestimonialsList = () => {
 
     try {
       await dispatch(updateIsActiveTestimonial(id));
-      await dispatch(getTestimonials());
 
       setTestmLoading((prevLoading) => {
         const updatedLoading = [...prevLoading];
@@ -96,17 +100,11 @@ export const TestimonialsList = () => {
   for (let i = 0; i < testimonials?.length!; i++) {
     const testmArray: TestimonialProps = testimonials?.[i];
 
-    const isActiveAdmin = !testmArray.is_active && testmLoading[i] === '';
-    const isActiveSuccess = testmArray.is_active;
-
-
     data.push({
-      key: (
-        <span className='flex justify-start gap-x-2'>
-          <span className='text-lg w-[20px]'>{i + 1}</span>
-          <span className=' pb-[2px] px-[1px] flex justify-center items-center uppercase'>
-            {isActiveAdmin ? <Tag color="error">Admin</Tag> : isActiveSuccess ? <Tag color="success">Success</Tag> : null}
-          </span>
+      key: i + 1,
+      status: (
+        <span className='pb-[2px] px-[1px] flex justify-center items-center uppercase'>
+          <Tag color="error">Admin</Tag>
         </span>
       ),
       text: testmArray.desriptiontext,

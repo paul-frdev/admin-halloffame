@@ -19,9 +19,10 @@ type PlacesProps = {
   setSelectedAddress: (e: string) => void;
   name?: string;
   error?: FieldError;
+  valueAddress?: string;
 };
 
-export const Places = ({ setOffice, setSelectedAddress, name, error }: PlacesProps) => {
+export const Places = ({ setOffice, setSelectedAddress, name, error, valueAddress }: PlacesProps) => {
   const {
     ready,
     value,
@@ -44,7 +45,7 @@ export const Places = ({ setOffice, setSelectedAddress, name, error }: PlacesPro
     <Combobox onSelect={handleSelect}>
       <ComboboxInput
         name={name}
-        value={value}
+        value={value || valueAddress}
         onChange={(e) => setValue(e.target.value)}
         disabled={!ready}
         className={cn(`w-full p-2 outline-none rounded-md shadow-lg border-[1.5px]`, error ? 'border-[#ef090d] placeholder:text-[#ef090d]' : 'border-transparent')}
