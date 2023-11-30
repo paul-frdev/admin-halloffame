@@ -35,7 +35,7 @@ export const TestimonialForm = () => {
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
 
 
-  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, getValues, reset, register } = useForm({
     defaultValues: {
       desriptiontext: '',
       image: [],
@@ -54,11 +54,13 @@ export const TestimonialForm = () => {
 
 
   useEffect(() => {
-    setValue('desriptiontext', testimonial?.desriptiontext!)
-    setValue('author', testimonial?.author!)
-    setValue('dignity', testimonial?.dignity!)
-    setValue('is_active', testimonial?.is_active! ?? false)
-  }, [testimonial])
+    if (testimonialId) {
+      setValue('desriptiontext', testimonial?.desriptiontext!)
+      setValue('author', testimonial?.author!)
+      setValue('dignity', testimonial?.dignity!)
+      setValue('is_active', testimonial?.is_active!)
+    }
+  }, [testimonial, testimonialId])
 
 
   useEffect(() => {
@@ -137,7 +139,7 @@ export const TestimonialForm = () => {
         <FormItem name='dignity' control={control} label='Enter dignity' help>
           <Input type='text' size="large" />
         </FormItem>
-        <FormItem control={control} name='is_active' valuePropName="is_active">
+        <FormItem control={control} name='is_active' valuePropName='checked' >
           <Checkbox
             defaultChecked={false}
             className='!text-[16px]' >Publish review on website</Checkbox>

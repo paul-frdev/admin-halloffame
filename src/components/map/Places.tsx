@@ -12,6 +12,7 @@ import {
 import "@reach/combobox/styles.css";
 import { cn } from '../../lib/utils';
 import { FieldError } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 
 
 type PlacesProps = {
@@ -23,16 +24,26 @@ type PlacesProps = {
 };
 
 export const Places = ({ setOffice, setSelectedAddress, name, error, valueAddress }: PlacesProps) => {
+
+  const [inputValue, setInputValue] = useState(valueAddress || '');
+
   const {
     ready,
-    value,
     setValue,
     suggestions: { status, data },
     clearSuggestions,
   } = usePlacesAutocomplete();
 
+  useEffect(() => {
+    setInputValue(valueAddress || ''); // Обновляем значение при изменении valueAddress
+  }, [valueAddress]);
+
+  useEffect(() => {
+    setValue(inputValue); // Обновляем значение в usePlacesAutocomplete при изменении inputValue
+  }, [inputValue, setValue]);
+
   const handleSelect = async (val: string) => {
-    setValue(val, false);
+    setInputValue(val);
     setSelectedAddress(val)
     clearSuggestions();
 
@@ -45,8 +56,8 @@ export const Places = ({ setOffice, setSelectedAddress, name, error, valueAddres
     <Combobox onSelect={handleSelect}>
       <ComboboxInput
         name={name}
-        value={value || valueAddress}
-        onChange={(e) => setValue(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         disabled={!ready}
         className={cn(`w-full p-2 outline-none rounded-md shadow-lg border-[1.5px]`, error ? 'border-[#ef090d] placeholder:text-[#ef090d]' : 'border-transparent')}
         placeholder={cn(``, error ? 'Address field is required' : 'Search location')}

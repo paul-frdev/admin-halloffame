@@ -40,14 +40,23 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
   useEffect(() => {
 
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-    const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`;
+    const encodedLocation = encodeURIComponent(location);
+
+    console.log('encodedLocation', encodedLocation);
+    
+    const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${apiKey}`;
 
     fetch(geocodingUrl)
       .then((response) => response.json())
       .then((data) => {
-        const location = data.results[0].geometry.location;
-        setLocationCoordinates({ lat: location.lat, lng: location.lng });
-        setLoadingCoords(false);
+        if (data.results && data.results.length > 0 && data.results[0].geometry) {
+          const location = data.results[0].geometry.location;
+          setLocationCoordinates({ lat: location.lat, lng: location.lng });
+          setLoadingCoords(false);
+        } else {
+          console.error('Invalid data received from geocoding API:', data);
+          setLoadingCoords(false);
+        }
       })
       .catch((error) => {
         console.error('Error fetching location coordinates:', error);

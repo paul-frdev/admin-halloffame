@@ -22,10 +22,9 @@ const validationSchema = yup.object().shape({
   contacts_phone: yup.string().required('Phone number is required'),
 });
 
-
 export const ContactsForm = () => {
 
-  const [phoneToObject, setPhoneToObject] = useState<any>(null)
+  const [phoneToObject, setPhoneToObject] = useState<any>()
   const [contactsId, setContactsId] = useState('')
   const dispatch = useAppDispatch()
 
@@ -110,11 +109,12 @@ export const ContactsForm = () => {
   };
 
   useEffect(() => {
-    const convertedPhone = convertToPhoneInputObject(contacts?.contacts_phone!)
+    const convertedPhone = convertToPhoneInputObject(getValues().contacts_phone)
     setPhoneToObject(convertedPhone)
   }, [contacts?.contacts_phone])
 
   const onSubmit: SubmitHandler<any> = async (data) => {
+
     try {
       if (contactsId === undefined) {
         await dispatch(createContact(data))
@@ -140,11 +140,26 @@ export const ContactsForm = () => {
           <Input size="large" />
         </CustomItem>
         <ConfigProvider>
-          <FormItem name="contacts_phone" rules={[{ validator }]} label='Enter a phone number' help>
-            <PhoneInput enableSearch onChange={(value) => handlePhoneNumber(value)} />
+          <FormItem
+            name="contacts_phone"
+            rules={[{ validator }]}
+            label='Enter a phone number'
+            help
+          >
+            <PhoneInput
+              defaultValue={phoneToObject}
+              enableSearch
+              onChange={(value) => handlePhoneNumber(value)}
+            />
           </FormItem>
         </ConfigProvider>
-        <Map location={getValues().contacts_address} valueAddress={getValues().contacts_address} name='contacts_address' setSelectedAddress={(data: string) => setValue('contacts_address', data)} error={errors.contacts_address} />
+        <Map
+          name='contacts_address'
+          location={getValues().contacts_address}
+          valueAddress={getValues().contacts_address}
+          setSelectedAddress={(data: string) => setValue('contacts_address', data)}
+          error={errors.contacts_address}
+        />
         <Form.Item>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
             {contactsId === undefined ? "Create" : "Edit and save"}
