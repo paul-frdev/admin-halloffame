@@ -101,7 +101,7 @@ export const SlideForm = () => {
         </FormItem>
         <Form.Item className='mt-4'>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
-            Submit
+          {curSlideId === undefined ? "Create" : "Edit"}
           </Button>
         </Form.Item>
       </Form>

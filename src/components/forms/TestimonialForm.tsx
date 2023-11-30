@@ -35,7 +35,7 @@ export const TestimonialForm = () => {
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
 
 
-  const { control, handleSubmit, formState: { errors }, setValue, getValues, reset, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm({
     defaultValues: {
       desriptiontext: '',
       image: [],
@@ -146,7 +146,7 @@ export const TestimonialForm = () => {
         </FormItem>
         <Form.Item className='mt-4'>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
-            Submit
+            {testimonialId === undefined ? "Create" : "Edit"}
           </Button>
         </Form.Item>
       </Form>
