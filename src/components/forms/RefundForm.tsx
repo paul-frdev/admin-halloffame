@@ -1,6 +1,6 @@
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import { toast } from 'react-toastify';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Title } from '../ui/Title';
 import { Button, Form } from 'antd';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,6 +10,8 @@ import { cn } from '../../lib/utils';
 import { createRefund, getRefund, getRefundId, updateRefund } from '../../store/contentSlice';
 import { useEffect, useState } from 'react';
 import { formats, container } from '../editor/constants';
+import { FormItem } from '../ui/FormItem';
+import { TextEditor } from '../editor/TextEditor';
 
 
 const validationSchema = yup.object().shape({
@@ -26,12 +28,12 @@ export const RefundForm = () => {
 
   const { refund, isError, message } = useAppSelector((state: RootState) => state.content)
 
-  const { control, handleSubmit, formState: { errors }, setValue } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm<FieldValues>({
     defaultValues: {
       refund_text: '',
       refund_id: ''
     },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema as any),
   });
 
   const modules = { toolbar: { container } }
@@ -67,8 +69,6 @@ export const RefundForm = () => {
   }, [refund])
 
   const onSubmit: SubmitHandler<any> = async (data) => {
-    console.log('refundId', refundId);
-    
     try {
       if (refundId === undefined) {
         await dispatch(createRefund(data))
@@ -87,28 +87,9 @@ export const RefundForm = () => {
       <Title level={3}>{refundId !== undefined ? "Edit" : "Add"} information about getting a refund back</Title>
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}
       >
-        <div className='relative'>
-          <Controller
-            control={control}
-            name="refund_text"
-            render={({ field }) => (
-              <div>
-                <ReactQuill
-                  theme="snow"
-                  placeholder='Write text'
-                  modules={modules}
-                  formats={formats}
-                  className={cn(`my-4 border-[1.5px] rounded-md`, errors.refund_text ? 'border-[#ef090d]' : ' border-transparent')}
-                  {...field}
-                  onChange={(text) => {
-                    field.onChange(text);
-                  }}
-                />
-              </div>
-            )}
-          />
-          {errors.refund_text && <p className='absolute -bottom-[35px] left-[8px] text-[#ef090d]'>{errors.refund_text.message}</p>}
-        </div>
+        <FormItem name='refund_text' control={control} help>
+          <TextEditor control={control} name='refund_text' label='Enter description' />
+        </FormItem>
         <Form.Item>
           <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
             {refundId === undefined ? "Create" : "Edit and save"}

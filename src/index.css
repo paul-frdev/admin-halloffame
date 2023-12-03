@@ -80,7 +80,8 @@ main::-webkit-scrollbar {
   border: 1px solid black;
 }
 
-.ql-editor, .ql-blank {
+.ql-editor,
+.ql-blank {
   background-color: #ffffff !important;
   min-height: 80px;
   font-size: 14px;
@@ -94,4 +95,56 @@ main::-webkit-scrollbar {
 
 .ant-table-cell {
   text-align: center !important;
+}
+
+.ql-editor {
+  min-height: 100px;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h1 {
+  font-size: 2em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h2 {
+  font-size: 1.7em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h3 {
+  font-size: 1.5em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h4 {
+  font-size: 1em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h5 {
+  font-size: 0.83em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h6 {
+  font-size: 0.67em !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h1 span {
+  font-size: inherit !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h2 span {
+  font-size: inherit !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h3 span {
+  font-size: inherit !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h4 span {
+  font-size: inherit !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h5 span {
+  font-size: inherit !important;
+}
+
+.DraftEditor-editorContainer .public-DraftEditor-content h6 span {
+  font-size: inherit !important;
 }

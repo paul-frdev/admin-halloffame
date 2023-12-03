@@ -211,6 +211,10 @@ export interface TestimonialProps {
   testimonial_id?: string;
   adminTag: string;
   image: ImageUrls[];
+  testimonial_image?: ImageUrls[];
+  testimonial_author?: string;
+  testimonial_description?: string;
+  testimonial_dignity?: string;
   desriptiontext: string;
   author: string;
   dignity: string;

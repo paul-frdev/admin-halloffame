@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import * as yup from "yup";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RootState, useAppSelector, useAppDispatch } from "../../store/store";
 import { ImagesProps, UploadImages } from '../common/UploadImages';
 import { FormItem } from '../ui/FormItem';
@@ -11,7 +11,7 @@ import ReactQuill from 'react-quill';
 import { cn } from '../../lib/utils';
 import { Title } from '../ui/Title';
 import { toast } from 'react-toastify';
-import { createTestimonial, getAdminTag, getTestimonial, resetStateTestimonial } from '../../store/testimonialSlice';
+import { createTestimonial, getAdminTag, getTestimonial, resetStateTestimonial, updateTestimonial } from '../../store/testimonialSlice';
 
 
 
@@ -21,12 +21,14 @@ const validationSchema = yup.object().shape({
   author: yup.string().required('Author field is required'),
   dignity: yup.string(),
   is_active: yup.boolean(),
-  adminTag: yup.string()
+  adminTag: yup.string(),
+  testimonial_id: yup.string(),
 });
 
 export const TestimonialForm = () => {
 
   const location = useLocation();
+  const navigate = useNavigate()
   const dispatch = useAppDispatch();
   const { images } = useAppSelector((state: RootState) => state.uploadImages);
   const { testimonial, adminTag } = useAppSelector((state: RootState) => state.testimonials);
@@ -42,7 +44,8 @@ export const TestimonialForm = () => {
       author: '',
       dignity: '',
       is_active: false,
-      adminTag: ''
+      adminTag: '',
+      testimonial_id: ''
     },
     resolver: yupResolver(validationSchema),
   });
@@ -55,10 +58,11 @@ export const TestimonialForm = () => {
 
   useEffect(() => {
     if (testimonialId) {
-      setValue('desriptiontext', testimonial?.desriptiontext!)
-      setValue('author', testimonial?.author!)
-      setValue('dignity', testimonial?.dignity!)
+      setValue('desriptiontext', testimonial?.testimonial_description!)
+      setValue('author', testimonial?.testimonial_author!)
+      setValue('dignity', testimonial?.testimonial_dignity!)
       setValue('is_active', testimonial?.is_active!)
+      setValue('testimonial_id', testimonial?.testimonial_id)
     }
   }, [testimonial, testimonialId])
 
@@ -93,6 +97,8 @@ export const TestimonialForm = () => {
       toast.success('Testimonial added successfully')
     } else {
       // TODO update Testimonial
+      dispatch(updateTestimonial(data));
+      navigate('/admin/testimonials-list')
     }
   }
 
@@ -111,7 +117,7 @@ export const TestimonialForm = () => {
           name='image'
           uploadedImages={onImageUpload}
           errors={errors.image}
-          publicId={testimonial?.image?.[0].public_id!}
+          publicId={testimonial?.testimonial_image?.[0].public_id!}
         />
         <div className='relative'>
           <Controller

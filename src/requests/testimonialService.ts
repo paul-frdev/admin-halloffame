@@ -27,9 +27,17 @@ const deleteTestimonial = async (id: string) => {
 };
 
 const updateTestimonial = async (testimonial: TestimonialProps) => {
+  console.log('testimonial', testimonial);
+
   const response = await axios.put(
     `${base_url}testimonial/${testimonial.testimonial_id}`,
-    { image: testimonial.image, desriptiontext: testimonial.desriptiontext, author: testimonial.author, dignity: testimonial.dignity },
+    {
+      image: testimonial.image,
+      desriptiontext: testimonial.desriptiontext,
+      author: testimonial.author,
+      dignity: testimonial.dignity,
+      is_active: testimonial.is_active,
+    },
     config
   );
 

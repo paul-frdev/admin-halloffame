@@ -73,7 +73,7 @@ export const UploadImages = ({ name, uploadedImages, register, errors, publicId 
           return (
             <div className="w-full" key={j}>
 
-              <div className='max-w-[900px] relative w-full'>
+              <div className='max-w-[1280px] relative w-full'>
                 <button
                   type="button"
                   onClick={() => deleteImage(image.public_id)}
@@ -82,7 +82,7 @@ export const UploadImages = ({ name, uploadedImages, register, errors, publicId 
                 >
                   <AiOutlineClose size={24} />
                 </button>
-                <img src={image.url} alt="img" style={{ width: '100%', height: 400 }} />
+                <img src={image.url} alt="img" style={{ width: '100%', height: 500 }} />
               </div>
             </div>
           );

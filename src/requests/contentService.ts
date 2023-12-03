@@ -85,7 +85,6 @@ const getRefund = async () => {
 };
 
 const updateRefund = async (refund: RefundProps) => {
-  console.log('refund', refund.refund_id);
   
   const response = await axios.put(
     `${base_url}refund/${refund.refund_id}`,

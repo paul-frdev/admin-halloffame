@@ -41,8 +41,6 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
 
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
     const encodedLocation = encodeURIComponent(location);
-
-    console.log('encodedLocation', encodedLocation);
     
     const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${apiKey}`;
 
