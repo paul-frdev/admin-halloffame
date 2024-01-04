@@ -2,7 +2,7 @@ import { ContentState, convertToRaw, EditorState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 import { Map } from 'immutable';
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { ForwardedRef, forwardRef, useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -12,7 +12,7 @@ type WYSIWYGEditorProps = {
 }
 
 const WYSIWYGEditor = forwardRef(
-  ({ onChange, value, ...props }: WYSIWYGEditorProps, ref: any) => {
+  ({ onChange, value, ...props }: WYSIWYGEditorProps,  ref: ForwardedRef<Editor>) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [updated, setUpdated] = useState(false);
 

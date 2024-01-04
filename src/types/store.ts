@@ -18,6 +18,7 @@ export interface BlogCategoryState {
 
 export interface BlogCategoriesState extends BasicState {
   bCategories: BlogCategoryState[];
+  bCategory?: BlogCategoryState;
 }
 
 export interface ArticleProps {

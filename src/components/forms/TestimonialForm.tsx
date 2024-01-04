@@ -12,11 +12,12 @@ import { cn } from '../../lib/utils';
 import { Title } from '../ui/Title';
 import { toast } from 'react-toastify';
 import { createTestimonial, getAdminTag, getTestimonial, resetStateTestimonial, updateTestimonial } from '../../store/testimonialSlice';
+import { TextEditor } from '../editor/TextEditor';
 
 
 
 const validationSchema = yup.object().shape({
-  desriptiontext: yup.string().required('Required field').min(14, 'Minimum length is 14 characters'),
+  desriptiontext: yup.string(),
   image: yup.array().of(yup.object()),
   author: yup.string().required('Author field is required'),
   dignity: yup.string(),
@@ -37,7 +38,7 @@ export const TestimonialForm = () => {
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
 
 
-  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm<any>({
     defaultValues: {
       desriptiontext: '',
       image: [],
@@ -119,26 +120,11 @@ export const TestimonialForm = () => {
           errors={errors.image}
           publicId={testimonial?.testimonial_image?.[0].public_id!}
         />
-        <div className='relative'>
-          <Controller
-            control={control}
-            name="desriptiontext"
-            render={({ field }) => (
-              <div>
-                <Title level={5}>Add description</Title>
-                <ReactQuill
-                  theme="snow"
-                  className={cn(`my-4 border-[1.5px] rounded-md`, errors.desriptiontext ? 'border-[#ef090d]' : ' border-transparent')}
-                  {...field}
-                  onChange={(text) => {
-                    field.onChange(text);
-                  }}
-                />
-              </div>
-            )}
-          />
-          {errors.desriptiontext && <p className='absolute -bottom-[35px] left-[8px] text-[#ef090d]'>{errors.desriptiontext.message}</p>}
-        </div>
+
+        <FormItem name='desriptiontext' control={control} label='Enter author' help>
+          <TextEditor control={control} name='desriptiontext' />
+        </FormItem>
+
         <FormItem name='author' control={control} label='Enter author' help>
           <Input type='text' size="large" />
         </FormItem>

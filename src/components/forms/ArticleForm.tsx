@@ -44,14 +44,13 @@ export const ArticleForm = () => {
   const dispatch = useAppDispatch();
   const { images } = useAppSelector((state: RootState) => state.uploadImages);
   const { bCategories } = useAppSelector((state: RootState) => state.blogCategory);
-  const { articles, article, isLoading } = useAppSelector((state: RootState) => state.articles);
+  const { article } = useAppSelector((state: RootState) => state.articles);
 
   const articleId = location.pathname.split("/")[3] || undefined;
   const imagesCloudinary: { public_id: string | undefined; url: string | undefined }[] = [];
   const articleType: any = [{ value: 'media_news', label: 'media_news' }, { value: 'blog_news', label: 'blog_news' },];
 
-
-  const { control, handleSubmit, formState: { errors }, setValue, getValues, reset, register } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, reset, register } = useForm({
     defaultValues: {
       title: '',
       description: '',
@@ -101,12 +100,13 @@ export const ArticleForm = () => {
 
     if (articleId === undefined) {
       dispatch(createArticle(data))
-      dispatch(resetStateArticle())
-      reset();
       toast.success('Article added successfully')
     } else {
       // TODO update article
     }
+
+    dispatch(resetStateArticle())
+    reset();
   }
 
 
@@ -144,7 +144,7 @@ export const ArticleForm = () => {
             name="description"
             render={({ field }) => (
               <div>
-                <Title level={5}>Add text about the article</Title>
+                <Title level={5}>Add text about an article</Title>
                 <ReactQuill
                   theme="snow"
                   className={cn(`my-4 border-[1.5px] rounded-md`, errors.description ? 'border-[#ef090d]' : ' border-transparent')}

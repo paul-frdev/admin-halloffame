@@ -27,7 +27,7 @@ export const AboutUsForm = () => {
 
   const { aboutUs, isError, isLoading, message } = useAppSelector((state: RootState) => state.content)
 
-  const { control, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FieldValues>({
+  const { control, handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       about_title: '',
       about_description: '',

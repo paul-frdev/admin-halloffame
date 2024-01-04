@@ -67,7 +67,7 @@ export const MediaArticlesList = () => {
       dataIndex: "action",
     },
   ];
-
+  
   if (articles !== undefined) {
 
     for (let i = 0; i < articles.length; i++) {
@@ -91,14 +91,14 @@ export const MediaArticlesList = () => {
         action: (
           <span className='flex justify-center items-center'>
             <Link
-              to={`/admin/article/${articles[i].article_id}`}
+              to={`/admin/article/${articles[i].id}`}
               className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
             >
               <BiEdit size={20} />
             </Link>
             <button
               className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
-              onClick={() => showModal(articles[i].article_id!)}
+              onClick={() => showModal(articles[i].id!)}
             >
               <AiFillDelete size={20} />
             </button>

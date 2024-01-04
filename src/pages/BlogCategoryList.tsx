@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Empty, Table } from "antd";
+import { Empty, Table, Breakpoint } from "antd";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { RootState, useAppDispatch, useAppSelector } from '../store/store';
@@ -15,16 +15,19 @@ const columns = [
   {
     title: "SNo",
     dataIndex: "key",
+    responsive: ["sm"] as Breakpoint[]
   },
   {
     title: "Name",
     dataIndex: "name",
     sorter: (a: any, b: any) => a.name.length - b.name.length,
+    responsive: ["sm"] as Breakpoint[]
   },
 
   {
     title: "Action",
     dataIndex: "action",
+    responsive: ["sm"] as Breakpoint[]
   },
 ];
 
@@ -53,18 +56,18 @@ export const BlogCategoryList = () => {
       key: i + 1,
       name: categoryArray.title,
       action: (
-        <span className='flex justify-start'>
+        <span className='flex justify-center items-center'>
           <Link
             to={`/admin/blog-category/${categoryArray.category_id}`}
             className=" fs-3 mr-4 text-[#ef090d]"
           >
-            <BiEdit />
+            <BiEdit size={20} />
           </Link>
           <button
             className="ms-3 fs-3 text-[#ef090d] bg-transparent border-0"
             onClick={() => showModal(categoryArray.category_id!)}
           >
-            <AiFillDelete />
+            <AiFillDelete size={20} />
           </button>
         </span>
       )
@@ -95,7 +98,7 @@ export const BlogCategoryList = () => {
 
   return (
     <div>
-      <Title level={3}>Blogs List</Title>
+      <Title level={3}>Blog category List</Title>
       <Table
         columns={columns}
         dataSource={data}

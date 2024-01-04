@@ -1,72 +1,80 @@
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import * as yup from "yup";
-import { useFormik } from "formik";
-import { CustomInput } from '../ui/CustomInput';
 import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
-import { createNewBlogCategory, resetStateBlogCategory } from '../../store/blogCategorySlice';
-import { Button } from '../ui/Button';
+import { createNewBlogCategory, getCategoryById, resetStateBlogCategory, updateCategory } from '../../store/blogCategorySlice';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Title } from '../ui/Title';
+import { toast } from 'react-toastify';
+import { Button, Form, Input } from 'antd';
+import { FormItem } from '../ui/FormItem';
 
-const schema = yup.object().shape({
+const validationSchema = yup.object().shape({
   title: yup.string().required("Category Name is Required"),
 });
-
 
 export const BlogCategoryForm = () => {
 
   const dispatch = useAppDispatch()
   const location = useLocation();
-  const getBlogCatId = location.pathname.split("/")[3];
-  const { bCategories, isError, isLoading, isSuccess } = useAppSelector((state: RootState) => state.blogCategory)
+  const navigate = useNavigate()
+  const { bCategories, isError, isLoading, isSuccess, bCategory } = useAppSelector((state: RootState) => state.blogCategory)
 
-  
+  const blogCatId = location.pathname.split("/")[3] || undefined;
+
   useEffect(() => {
     dispatch(resetStateBlogCategory());
   }, [])
-  
-  const formik = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      title: "",
+
+  useEffect(() => {
+    setValue('title', bCategory?.title!)
+  }, [bCategory])
+
+  useEffect(() => {
+    if (blogCatId !== undefined) {
+      dispatch(getCategoryById(blogCatId))
+    } else {
+      dispatch(resetStateBlogCategory())
+    }
+  }, [blogCatId])
+
+  const { control, handleSubmit, setValue, reset } = useForm({
+    defaultValues: {
+      title: '',
     },
-    validationSchema: schema,
-    onSubmit: async (values) => {
-      const data = { title: values.title }
-      dispatch(createNewBlogCategory(data));
-      formik.resetForm();
-      setTimeout(() => {
-        dispatch(resetStateBlogCategory())
-      }, 300);
-    },
+    resolver: yupResolver(validationSchema),
   });
+
+  const onSubmit: SubmitHandler<any> = (data) => {
+
+    if (blogCatId === undefined) {
+      dispatch(createNewBlogCategory(data))
+      toast.success('blog category added successfully')
+    } else {
+      const updatedCategory = { category_id: blogCatId, title: data.title }
+      dispatch(updateCategory(updatedCategory))
+      toast.success('blog category updated successfully')
+      navigate('/admin/blog-list')
+    }
+
+    dispatch(resetStateBlogCategory())
+    reset();
+  }
+
   return (
     <div>
-      <h3 className="mb-4  title">
-        {getBlogCatId !== undefined ? "Edit" : "Add"} Blog Category
-      </h3>
-      <div>
-        <form action="" onSubmit={formik.handleSubmit}>
-          <CustomInput
-            type="text"
-            name="title"
-            onChange={formik.handleChange("title")}
-            onBlur={formik.handleBlur("title")}
-            value={formik.values.title}
-            label="Enter Blog Category"
-            id="blogcat"
-          />
-          <div className="error">
-            {formik.touched.title && formik.errors.title}
-          </div>
-          <Button
-            className="btn btn-success border-0 rounded-3 my-5"
-            type="submit"
-          >
-            {getBlogCatId !== undefined ? "Edit" : "Add"} Blog Category
+      <Title> {blogCatId !== undefined ? "Edit" : "Add"} Blog Category</Title>
+      <Form action="" layout="vertical" onFinish={handleSubmit(onSubmit)}>
+        <FormItem name='title' control={control} label='Enter title' help>
+          <Input type='text' size="large" />
+        </FormItem>
+        <Form.Item className='mt-4'>
+          <Button className='w-[150px] mt-4' size="large" type="primary" htmlType="submit">
+            Submit
           </Button>
-        </form>
-      </div>
-
+        </Form.Item>
+      </Form>
     </div>
   )
 }

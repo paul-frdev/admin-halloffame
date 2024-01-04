@@ -147,7 +147,7 @@ export const ContactsForm = () => {
             help
           >
             <PhoneInput
-              defaultValue={phoneToObject}
+              value={phoneToObject}
               enableSearch
               onChange={(value) => handlePhoneNumber(value)}
             />

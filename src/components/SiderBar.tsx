@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Layout, Menu } from 'antd';
 import { AiOutlineDashboard, AiOutlineUsergroupAdd, AiOutlineFolderAdd, AiOutlineBgColors } from 'react-icons/ai'
 import { BiCartAdd } from 'react-icons/bi'

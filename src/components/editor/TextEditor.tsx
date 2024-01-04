@@ -1,7 +1,8 @@
-import React, { forwardRef } from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import { stripHtml } from "string-strip-html";
 import WYSIWYGEditor from './WYSIWYGEditor';
-import { Control, Controller, FieldValues, Path, UseControllerProps } from 'react-hook-form';
+import { Controller, FieldValues, Path, UseControllerProps } from 'react-hook-form';
+import { Editor as DraftEditor } from 'draft-js';
 
 interface TextInputProps<TFieldValues extends FieldValues = FieldValues, TName extends Path<TFieldValues> = Path<TFieldValues>> extends UseControllerProps<TFieldValues, TName> {
   disabled?: boolean;
@@ -9,26 +10,22 @@ interface TextInputProps<TFieldValues extends FieldValues = FieldValues, TName e
   placeholder?: string;
 }
 
-export const TextEditor = forwardRef<HTMLDivElement, TextInputProps>(
+export const TextEditor = forwardRef<DraftEditor, TextInputProps>(
   (
     {
       control,
-      defaultValue,
-      disabled = false,
-      label,
       name,
-      placeholder = "",
-      rules,
     }: TextInputProps,
-    forwardedRef
+    forwardedRef: ForwardedRef<DraftEditor>
   ) => {
 
     return (
       <Controller
         name={name}
         control={control}
+        defaultValue=''
         render={({ field }) => (
-          <WYSIWYGEditor {...field} />
+          <WYSIWYGEditor {...field} ref={forwardedRef as any} />
         )}
         rules={{
           validate: {

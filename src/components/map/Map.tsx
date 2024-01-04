@@ -20,7 +20,7 @@ interface MapProps {
   valueAddress?: string;
 }
 
-export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, className, location = '', valueAddress }) => {
+export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, className, location = 'Україна, площадь Победы, Киев, Украина', valueAddress }) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: ["places"],
@@ -28,7 +28,7 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
   const [locationCoordinates, setLocationCoordinates] = useState<LatLngLiteral>();
   const [loadingCoords, setLoadingCoords] = useState(true);
 
-
+  
   const mapRef = useRef<GoogleMap>();
   const options = useMemo<MapOptions>(() => ({
     mapId: "3f5947443e61e6f9",
@@ -41,25 +41,27 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
 
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
     const encodedLocation = encodeURIComponent(location);
-    
+
     const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${apiKey}`;
 
-    fetch(geocodingUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.results && data.results.length > 0 && data.results[0].geometry) {
-          const location = data.results[0].geometry.location;
-          setLocationCoordinates({ lat: location.lat, lng: location.lng });
+    if (location) {
+      fetch(geocodingUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.results && data.results.length > 0 && data.results[0].geometry) {
+            const location = data.results[0].geometry.location;
+            setLocationCoordinates({ lat: location.lat, lng: location.lng });
+            setLoadingCoords(false);
+          } else {
+            console.error('Invalid data received from geocoding API:', data);
+            setLoadingCoords(false);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching location coordinates:', error);
           setLoadingCoords(false);
-        } else {
-          console.error('Invalid data received from geocoding API:', data);
-          setLoadingCoords(false);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching location coordinates:', error);
-        setLoadingCoords(false);
-      });
+        });
+    }
   }, [location]);
 
 
@@ -68,7 +70,7 @@ export const Map: React.FC<MapProps> = ({ setSelectedAddress, name, error, class
   }, []);
 
   if (!isLoaded || loadingCoords) {
-    return <Loader />
+    return <Loader  className='py-24'/>
   }
   return (
     <div className=" relative flex w-full h-[500px] mb-8">
