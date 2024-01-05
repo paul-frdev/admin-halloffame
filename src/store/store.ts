@@ -14,6 +14,7 @@ import ticketSlice from './ticketSlice';
 import slideSlice from './slideSlice';
 import testimonialsSlice from './testimonialSlice';
 import contentSlice from './contentSlice';
+import authSlice from './authSlice';
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     slides: slideSlice,
     testimonials: testimonialsSlice,
     content: contentSlice,
+    auth: authSlice,
   },
 });
 

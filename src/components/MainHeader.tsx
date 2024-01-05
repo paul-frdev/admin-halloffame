@@ -13,8 +13,8 @@ import { cn } from '../lib/utils';
 const { Header } = Layout;
 
 interface MainHeaderProps {
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
   setCollapsed: (data: boolean) => void;
   setVisible: (data: any) => void;
   colorBgContainer: any;

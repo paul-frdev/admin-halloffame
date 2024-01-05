@@ -4,6 +4,8 @@ import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { SiderBarWithMemo } from './SiderBar';
 import { MainHeader } from './MainHeader';
+import { RootState, useAppDispatch, useAppSelector } from '../store/store';
+import { authorize } from '../store/authSlice';
 
 
 const { Content } = Layout;
@@ -16,27 +18,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
 
   const [collapsed, setCollapsed] = useState(false);
   const [visible, setVisible] = useState(false)
-  const [dataProfile, setDataProfile] = useState<any>([]);
+
+  const dispatch = useAppDispatch()
+
+  const { authCurUser, isAuth, isSuccess, isError, isLoading, user } = useAppSelector((state: RootState) => state.auth)
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
 
-  const getProfile = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/", {
-        method: "POST",
-        headers: { jwt_token: localStorage.user }
-      });
-
-      const parseData = await res.json();
-
-      setDataProfile({ name: parseData.first_name, email: parseData.email })
-    } catch (error: any) {
-      console.error(error.message);
+  useEffect(() => {
+    if (user) {
+      dispatch(authorize())
     }
-  };
+  }, [user])
+
 
   const logout = async (e: any) => {
     e.preventDefault();
@@ -49,17 +46,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ setAuth }) => {
     }
   };
 
-  useEffect(() => {
-    getProfile();
-  }, []);
-
   return (
     <Layout>
       <SiderBarWithMemo collapsed={collapsed} />
       <Layout className='side-layout'>
         <MainHeader
-          name={dataProfile.name}
-          email={dataProfile.email}
+          name={authCurUser?.first_name}
+          email={authCurUser?.email}
           setCollapsed={setCollapsed}
           setVisible={setVisible}
           logOut={logout}

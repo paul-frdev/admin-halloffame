@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { CustomInput } from '../ui/CustomInput';
 import { toast } from 'react-toastify';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { RootState, useAppDispatch, useAppSelector } from '../../store/store';
+import { login } from '../../store/authSlice';
+import { FormItem } from '../ui/FormItem';
+import { Button, Form, Input, Select, message } from 'antd';
 
 
 const schema = yup.object().shape({
@@ -19,74 +25,38 @@ interface LoginFormProps {
 }
 export const LoginForm: React.FC<LoginFormProps> = ({ setAuth }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch()
 
 
-  const formik = useFormik({
-    initialValues: {
+  const { user, isError, isLoading, isSuccess, message } = useAppSelector((state: RootState) => state.auth)
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
       email: "",
       password: "",
     },
-    validationSchema: schema,
-    onSubmit: async (values) => {
-      try {
-        const response = await fetch('http://localhost:5000/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        })
-
-        const parseRes = await response.json();
-
-        if (parseRes.jwtToken) {
-          localStorage.setItem("user", parseRes.jwtToken);
-          setAuth(true);
-          toast.success("Logged in Successfully");
-          navigate('/admin', { replace: true })
-        } else {
-          setAuth(false);
-          toast.error(parseRes);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    resolver: yupResolver(schema),
   });
 
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    if (!user) {
+      await dispatch(login(data))
+      setAuth(true);
+      toast.success("Logged in Successfully");
+      navigate("/admin");
+    } else {
+      setAuth(false);
+      toast.error(message as any);
+    }
+  }
 
   return (
-    <form action="" onSubmit={formik.handleSubmit}>
-      <div className='relative pb-4'>
-        <CustomInput
-          type="text"
-          label="Email Address"
-          id="email"
-          name="email"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.email}
-          className={formik.touched.email && formik.errors.email ? 'border-2 border-[#ef090d]' : ''}
-        />
-        <div className="absolute -bottom-[8px] left-[8px] text-[#ef090d]">
-          {formik.touched.email && formik.errors.email}
-        </div>
-      </div>
-      <div className='relative pb-4'>
-        <CustomInput
-          type="password"
-          label="Password"
-          id="password"
-          name="password"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.password}
-          className={formik.touched.email && formik.errors.email ? 'border-2 border-[#ef090d]' : ''}
-        />
-        <div className="absolute -bottom-[8px] left-[8px] text-[#ef090d]">
-          {formik.touched.password && formik.errors.password}
-        </div>
-      </div>
+    <Form action="" layout="vertical" onFinish={handleSubmit(onSubmit)}>
+      <FormItem name='email' control={control} label='Enter Email' help>
+        <Input type='text' size="large" className='h-[50px]' />
+      </FormItem>
+      <FormItem name='password' control={control} label='Enter password' help>
+        <Input type='password' size="large" className='h-[50px]' />
+      </FormItem>
       <div className="flex justify-between mt-4 mb-8 text-md text-end w-full items-center">
         <Link to="register" className="text-[#64748b] hover:text-[#788191]">
           Register
@@ -95,12 +65,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ setAuth }) => {
           Forgot Password ?
         </Link>
       </div>
-      <button
-        className='h-[60px] text-lg border-0 px-3 py-2 text-white fw-bold w-full max-w-[400px] mx-auto flex justify-center items-center text-center bg-black rounded-md'
-        type="submit"
-      >
-        Login
-      </button>
-    </form>
+      <Form.Item className='mt-4'>
+        <Button className='w-full !h-[50px] uppercase mt-4' size="large" type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   )
 }

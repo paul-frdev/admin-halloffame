@@ -4,11 +4,29 @@ export type IOption = {
   icon?: string;
 };
 
+export interface FullUser {
+  first_name: string;
+  email: string;
+  password: string;
+  phone_number: string;
+}
+export interface User {
+  email: string;
+  password: string;
+}
+
+export type AuthUser = Omit<FullUser, 'password' | 'phone_number'>;
 export interface BasicState {
   isError: boolean;
+  authCurUser?: AuthUser;
   isLoading: boolean;
   isSuccess: boolean;
   message: unknown;
+}
+
+export interface AuthState extends BasicState {
+  user: User;
+  isAuth: boolean;
 }
 
 export interface BlogCategoryState {
